@@ -1,65 +1,175 @@
+import 'package:attendance_marker_frontend/screens/add_user_screen.dart';
+import 'package:attendance_marker_frontend/screens/login_screen.dart';
+import 'package:attendance_marker_frontend/screens/manage_attendances_screen.dart';
+import 'package:attendance_marker_frontend/screens/manage_companies_screen.dart';
+import 'package:attendance_marker_frontend/screens/manage_users_screen.dart';
+import 'package:attendance_marker_frontend/utils/constants/color_constants.dart';
+import 'package:attendance_marker_frontend/utils/constants/icon_constants.dart';
 import 'package:flutter/material.dart';
-
-import '../variables/text_values.dart';
+import '../constants/size_constants.dart';
+import '../constants/text_constants.dart';
 
 class NavigationalDrawerWidget {
-  static functionUserNavigationalDrawer(BuildContext context) {
-    var paddings = const EdgeInsets.symmetric(horizontal: 16);
 
+  static functionUserNavigationalDrawer(username,email, companyName, companyLocation, context) {
+
+    
     Size size = MediaQuery.of(context).size;
+    var drawerHeight = size.height;
+    var drawerWidth = size.width;
+
     return Drawer(
       child: Material(
-        color: Colors.teal,
+        color: ColorConstants.drawerBodyColor,
         child: ListView(
-          padding: paddings,
+          padding: const EdgeInsets.symmetric(
+              horizontal: SizeConstants.drawerPaddingHorizontal),
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                  vertical: SizeConstants.drawerPaddingVertical),
               child: SizedBox(
-                height: size.height / 5,
-                width: size.width,
-                child: Image.asset(TextValues.appLogoImageLink),
+                height: drawerHeight / SizeConstants.drawerImageHeightDivideBy,
+                width: drawerWidth,
+                child: Image.asset(TextConstants.appLogoImageLink),
               ),
             ),
-            const SizedBox(
-              height: 10,
+            const Padding(
+              padding: EdgeInsets.only(
+                  left: SizeConstants.titleTextPaddingHorizontal,
+                  right: SizeConstants.titleTextPaddingHorizontal,
+                  bottom: SizeConstants.titleTextPaddingBottom),
+              child: Text(
+                TextConstants.appTitle,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: SizeConstants.drawerAppNameFontSize,
+                    color: ColorConstants.drawerTextColor),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
             ),
             buildMenuItem(
-              text: 'Home',
-              icon: Icons.home,
-              onClicked: () => selectedItem(context, 0),
+              text: username,
+              icon: IconConstants.username,
             ),
-            const SizedBox(
-              height: 5,
-            ),
-            buildMenuItem(
-              text: 'Categories',
-              icon: Icons.category,
-              onClicked: () => selectedItem(context, 1),
-            ),
-            const SizedBox(
-              height: 5,
+            const Divider(
+              color: ColorConstants.drawerIconColor,
             ),
             buildMenuItem(
-              text: 'Questions',
-              icon: Icons.question_answer,
-              onClicked: () => selectedItem(context, 2),
+              text: email,
+              icon: IconConstants.email,
             ),
-            const SizedBox(
-              height: 5,
-            ),
-            buildMenuItem(
-              text: 'Users',
-              icon: Icons.account_circle,
-              onClicked: () => selectedItem(context, 3),
-            ),
-            const SizedBox(
-              height: 5,
+            const Divider(
+              color: ColorConstants.drawerIconColor,
             ),
             buildMenuItem(
-              text: 'Problems',
-              icon: Icons.report_problem,
-              onClicked: () => selectedItem(context, 4),
+              text: companyName,
+              icon: IconConstants.companyName,
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
+            ),
+            buildMenuItem(
+              text: companyLocation,
+              icon: IconConstants.companyLocation,
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
+            ),
+            buildMenuItem(
+              text: TextConstants.drawerSignOut,
+              icon: IconConstants.appLogOut,
+              onClicked: () => userSelectedItem(context, 0),
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static functionAdminNavigationalDrawer(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    var drawerHeight = size.height;
+    var drawerWidth = size.width;
+
+    return Drawer(
+      child: Material(
+        color: ColorConstants.drawerBodyColor,
+        child: ListView(
+          padding: const EdgeInsets.symmetric(
+              horizontal: SizeConstants.drawerPaddingHorizontal),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  vertical: SizeConstants.drawerPaddingVertical),
+              child: SizedBox(
+                height: drawerHeight / SizeConstants.drawerImageHeightDivideBy,
+                width: drawerWidth,
+                child: Image.asset(TextConstants.appLogoImageLink),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(
+                  left: SizeConstants.titleTextPaddingHorizontal,
+                  right: SizeConstants.titleTextPaddingHorizontal,
+                  bottom: SizeConstants.titleTextPaddingBottom),
+              child: Text(
+                TextConstants.appTitle,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: SizeConstants.drawerAppNameFontSize,
+                    color: ColorConstants.drawerTextColor),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
+            ),
+            buildMenuItem(
+              text: TextConstants.drawerHome,
+              icon: IconConstants.home,
+              onClicked: () => adminSelectedItem(context, 0),
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
+            ),
+            buildMenuItem(
+              text: TextConstants.drawerCompanies,
+              icon: IconConstants.companyName,
+              onClicked: () => adminSelectedItem(context, 1),
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
+            ),
+            buildMenuItem(
+              text: TextConstants.drawerUsers,
+              icon: IconConstants.users,
+              onClicked: () => adminSelectedItem(context, 2),
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
+            ),
+            buildMenuItem(
+              text: TextConstants.drawerAttendances,
+              icon: IconConstants.attendances,
+              onClicked: () => adminSelectedItem(context, 3),
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
+            ),
+            buildMenuItem(
+              text: TextConstants.drawerSignOut,
+              icon: IconConstants.appLogOut,
+              onClicked: () => adminSelectedItem(context, 4),
+            ),
+            const Divider(
+              color: ColorConstants.drawerIconColor,
             ),
           ],
         ),
@@ -72,8 +182,8 @@ class NavigationalDrawerWidget {
     required IconData icon,
     VoidCallback? onClicked,
   }) {
-    const color = Colors.white;
-    const hoverColor = Colors.white;
+    const color = ColorConstants.drawerIconColor;
+    const hoverColor = ColorConstants.drawerIconColor;
     return ListTile(
       leading: Icon(icon, color: color),
       title: Text(
@@ -85,36 +195,41 @@ class NavigationalDrawerWidget {
     );
   }
 
-  static void selectedItem(BuildContext context, int index) {
+  static void userSelectedItem(BuildContext context, int index) {
     Navigator.of(context).pop();
     switch (index) {
       case 0:
-        // Navigator.of(context).push(MaterialPageRoute(
-        //   builder: (context) => MainMenu(),
-        // ));
+        // UserService().signout();
+        break;
+    }
+  }
+
+  static void adminSelectedItem(BuildContext context, int index) {
+    Navigator.of(context).pop();
+    switch (index) {
+      case 0:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const AddUserScreen()));
         break;
       case 1:
-        // Navigator.of(context).push(MaterialPageRoute(
-        //   builder: (context) => CategoryList(),
-        // ));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ManageCompaniesScreen()));
         break;
       case 2:
-        // Navigator.of(context).push(MaterialPageRoute(
-        //   builder: (context) => QuestionsList(),
-        // ));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
         break;
       case 3:
-        // Navigator.of(context).push(MaterialPageRoute(
-        //   builder: (context) => UserList(),
-        // ));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ManageAttendancesScreen()));
         break;
       case 4:
-        // Navigator.of(context).push(MaterialPageRoute(
-        //   builder: (context) => ProblemMenu(),
-        // ));
-        break;
-      case 5:
-        // UserService().signout();
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()));
         break;
     }
   }

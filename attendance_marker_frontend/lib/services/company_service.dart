@@ -1,34 +1,144 @@
+import 'package:attendance_marker_frontend/screens/all_companies_screen.dart';
+import 'package:attendance_marker_frontend/screens/single_company_screen.dart';
+import 'package:attendance_marker_frontend/utils/constants/model_constants.dart';
+import 'package:attendance_marker_frontend/utils/widgets/toast_widget.dart';
 import 'package:dio/dio.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utils/variables/backend_api.dart';
-import '../utils/variables/color_palette.dart';
-import '../utils/variables/size_values.dart';
-import '../utils/variables/text_values.dart';
+import '../screens/add_company_screen.dart';
+import '../utils/constants/backend_api_constants.dart';
+import '../utils/constants/color_constants.dart';
+import '../utils/constants/text_constants.dart';
 
-class CompanyService{
+class CompanyService {
   Dio dio = Dio();
 
-  
-  addCompany(companyName, companyLocation) async {
-    try {
-      await dio.post(BackendAPI.addCompanyAPI,
-          data: {
-            'companyName': companyName,
-            'companyLocation': companyLocation,
-          },
-          options: Options(contentType: Headers.jsonContentType));
+  // ---------------------------------------------- Add Company Function Start ----------------------------------------------
+  addCompany(companyName, companyLocation, context) async {
+    Response response;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var accessToken = prefs.getString(ModelConstants.token);
 
-      // return Get.off(() => MainMenu());
+    try {
+      response = await dio.post(
+        BackendAPIConstants.rootAPI + BackendAPIConstants.addCompanyAPI,
+        data: {
+          ModelConstants.companyName: companyName,
+          ModelConstants.companyLocation: companyLocation,
+        },
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {ModelConstants.auth: "Bearer $accessToken"},
+        ),
+      );
+
+      if (response.statusCode == 201) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AllCompaniesScreen()));
+
+        ToastWidget.functionToastWidget(
+            TextConstants.addCompanyButtonSuccessToast,
+            ColorConstants.toastSuccessColor);
+      } else {
+        ToastWidget.functionToastWidget(
+            TextConstants.addCompanyButtonErrorToast,
+            ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const AddCompanyScreen()));
+      }
     } on DioError catch (e) {
-      Fluttertoast.showToast(
-          msg: TextValues.companyServiceAddCompanyErrorToast,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: ColorPalette.toastErrorColor,
-          textColor: ColorPalette.toastTextColor,
-          fontSize: SizeValues.toastFontSize);
+      ToastWidget.functionToastWidget(
+          e.toString(), ColorConstants.toastWarningColor);
+    }
+  }
+
+  // ---------------------------------------------- Update Company By Id Function Start ----------------------------------------------
+  updateCompanyById(companyId, companyName, companyLocation, context) async {
+    Response response;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var accessToken = prefs.getString(ModelConstants.token);
+
+    try {
+      response = await dio.put(
+        BackendAPIConstants.rootAPI +
+            BackendAPIConstants.updateCompanyByIdAPI +
+            companyId,
+        data: {
+          ModelConstants.companyName: companyName,
+          ModelConstants.companyLocation: companyLocation,
+        },
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {ModelConstants.auth: "Bearer $accessToken"},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AllCompaniesScreen()));
+
+        ToastWidget.functionToastWidget(TextConstants.updateCompanySuccessToast,
+            ColorConstants.toastSuccessColor);
+      } else {
+        ToastWidget.functionToastWidget(TextConstants.updateCompanyErrorToast,
+            ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SingleCompanyScreen(
+                    comId: companyId,
+                    comName: companyName,
+                    comLocation: companyLocation)));
+      }
+    } on DioError catch (e) {
+      ToastWidget.functionToastWidget(
+          e.toString(), ColorConstants.toastWarningColor);
+    }
+  }
+
+  // ---------------------------------------------- Delete Company By Id Function Start ----------------------------------------------
+  deleteCompanyById(companyId, context) async {
+    Response response;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var accessToken = prefs.getString(ModelConstants.token);
+    try {
+      response = await dio.delete(
+        BackendAPIConstants.rootAPI +
+            BackendAPIConstants.deleteCompanyByIdAPI +
+            companyId,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {ModelConstants.auth: "Bearer $accessToken"},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AllCompaniesScreen()));
+
+        ToastWidget.functionToastWidget(TextConstants.deleteCompanySuccessToast,
+            ColorConstants.toastSuccessColor);
+      } else {
+        ToastWidget.functionToastWidget(TextConstants.deleteCompanyErrorToast,
+            ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AllCompaniesScreen()));
+      }
+    } on DioError catch (e) {
+      ToastWidget.functionToastWidget(
+          e.toString(), ColorConstants.toastWarningColor);
     }
   }
 }

@@ -1,9 +1,11 @@
-import 'package:attendance_marker_frontend/utils/variables/icon_palette.dart';
-import 'package:attendance_marker_frontend/utils/variables/size_values.dart';
-import 'package:attendance_marker_frontend/utils/widgets/navigational_drawer_widget.dart';
+import 'package:attendance_marker_frontend/services/company_service.dart';
+import 'package:attendance_marker_frontend/utils/constants/icon_constants.dart';
+import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:flutter/material.dart';
 
-import '../variables/color_palette.dart';
+import '../../services/attendance_service.dart';
+import '../../services/user_service.dart';
+import '../constants/color_constants.dart';
 
 class UserAppBarWidget {
   static functionAppBarInside(var appBarTextValue, var context) {
@@ -22,9 +24,9 @@ class UserAppBarWidget {
         IconButton(
           alignment: Alignment.centerRight,
           icon: const Icon(
-            IconPalette.appLogOut,
-            color: ColorPalette.appBarIconColor,
-            size: SizeValues.appBarIconSize,
+            IconConstants.appLogOut,
+            color: ColorConstants.appBarIconColor,
+            size: SizeConstants.appBarIconSize,
           ),
           onPressed: () {
             // do something
@@ -37,7 +39,7 @@ class UserAppBarWidget {
         appBarTextValue,
         textAlign: TextAlign.center,
         style: const TextStyle(
-          color: ColorPalette.appBarTitleText,
+          color: ColorConstants.appBarTitleText,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -64,10 +66,107 @@ class UserAppBarWidget {
         appBarTextValue,
         textAlign: TextAlign.center,
         style: const TextStyle(
-          color: ColorPalette.appBarTitleText,
+          color: ColorConstants.appBarTitleText,
           fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
+
+  static functionAppBarInsideBackButtonWithDeleteCompany(
+      var appBarTextValue, var companyIdValue, context) {
+    return AppBar(
+      leading: BackButton(
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      elevation: 0,
+      centerTitle: true,
+      title: Text(
+        appBarTextValue,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: ColorConstants.appBarTitleText,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          alignment: Alignment.centerRight,
+          icon: const Icon(
+            IconConstants.appDelete,
+            color: ColorConstants.appBarIconColor,
+            size: SizeConstants.appBarIconSize,
+          ),
+          onPressed: () {
+            CompanyService().deleteCompanyById(companyIdValue, context);
+          },
+        ),
+      ],
+    );
+  }
+
+  static functionAppBarInsideBackButtonWithDeleteUser(
+      var appBarTextValue, var userIdValue, context) {
+    return AppBar(
+      leading: BackButton(
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      elevation: 0,
+      centerTitle: true,
+      title: Text(
+        appBarTextValue,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: ColorConstants.appBarTitleText,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          alignment: Alignment.centerRight,
+          icon: const Icon(
+            IconConstants.appDelete,
+            color: ColorConstants.appBarIconColor,
+            size: SizeConstants.appBarIconSize,
+          ),
+          onPressed: () {
+            UserService().deleteUserById(userIdValue, context);
+          },
+        ),
+      ],
+    );
+  }
+
+  static functionAppBarInsideBackButtonWithDeleteAttendance(
+      var appBarTextValue, var attendanceIdValue, context) {
+    return AppBar(
+      leading: BackButton(
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      elevation: 0,
+      centerTitle: true,
+      title: Text(
+        appBarTextValue,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: ColorConstants.appBarTitleText,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          alignment: Alignment.centerRight,
+          icon: const Icon(
+            IconConstants.appDelete,
+            color: ColorConstants.appBarIconColor,
+            size: SizeConstants.appBarIconSize,
+          ),
+          onPressed: () {
+            AttendanceService().deleteAttendanceById(attendanceIdValue, context);
+          },
+        ),
+      ],
+    );
+  }
+
 }

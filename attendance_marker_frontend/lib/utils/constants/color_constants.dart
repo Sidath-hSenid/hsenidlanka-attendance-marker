@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ColorPalette {
+class ColorConstants {
   // Aplication Colors
   static const MaterialColor primaryColor = Colors.green;
 
@@ -24,6 +24,7 @@ class ColorPalette {
   // Toast Colors
   static const Color toastSuccessColor = Colors.green;
   static const Color toastErrorColor = Colors.red;
+  static const Color toastWarningColor = Colors.amber;
   static const Color toastTextColor = Colors.white;
 
   // App Bar Colors
@@ -40,4 +41,17 @@ class ColorPalette {
   // Screen Colors
   static const Color signInScreenColor = Colors.white;
 
+  // Drawer Colors
+  static const Color drawerBodyColor = Colors.green;
+  static const Color drawerTextColor = Colors.white;
+  static const Color drawerIconColor = Colors.white;
+
+  // Card Colors
+  static Color cardAttributeTextColor = Colors.grey.shade800;
+  static Color cardValueTextColor = Colors.grey.shade600;
+  static Color userCardAttributeTextColor = Colors.black;
+  static Color userCardValueTextColor = Colors.grey.shade400;
+
+  // Info Colors
+  static const Color infoTextColor = Colors.grey;
 }

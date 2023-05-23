@@ -1,32 +1,22 @@
-import 'package:attendance_marker_frontend/utils/constants/color_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:flutter/material.dart';
 
-class FormTextFieldWidget {
-  static functionTextFormField(var enableValue,var controllerValue, onChangedValue, var lableValue,
-      var obscureValue, var iconValue, validatorValue) {
-    return TextFormField(
-      enabled: enableValue,
-      controller: controllerValue,
-      onChanged: onChangedValue,
-      validator: validatorValue,
-      obscureText: obscureValue,
-      style: const TextStyle(color: ColorConstants.textColor),
+import '../constants/color_constants.dart';
+
+class DropdwonListWidget {
+  static functionDropdownList(var iconValue, var selectValue, var validatorValue, var onChangeValue,
+       var itemsValue) {
+    return DropdownButtonFormField(
       decoration: InputDecoration(
         prefixIcon: iconValue,
         prefixIconColor: ColorConstants.textFieldIcon,
-        labelText: lableValue,
-        labelStyle: const TextStyle(
-            fontSize: SizeConstants.textFieldFontSize,
-            color: ColorConstants.textFieldColor),
+        hintTextDirection: null,
         fillColor: ColorConstants.fillColor,
         filled: true,
         focusedBorder: OutlineInputBorder(
           borderRadius:
               BorderRadius.circular(SizeConstants.textFieldBorderRadius),
-          borderSide: const BorderSide(
-            color: ColorConstants.focusBorder,
-          ),
+          borderSide: const BorderSide(color: ColorConstants.focusBorder),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius:
@@ -51,6 +41,17 @@ class FormTextFieldWidget {
           ),
         ),
       ),
+      isExpanded: true,
+      dropdownColor: ColorConstants.fillColor,
+      hint: Text(selectValue,
+          textDirection: null,
+          style: const TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: SizeConstants.textFieldFontSize,
+              color: ColorConstants.textFieldColor)),
+      validator: validatorValue,
+      onChanged: onChangeValue,
+      items: itemsValue
     );
   }
 }

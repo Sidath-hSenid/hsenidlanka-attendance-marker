@@ -5,12 +5,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/user_service.dart';
-import '../services/validator_service.dart';
-import '../utils/variables/color_palette.dart';
-import '../utils/variables/icon_palette.dart';
-import '../utils/variables/size_values.dart';
-import '../utils/variables/text_values.dart';
-import '../utils/widgets/user_app_bar_widget.dart';
+import '../utils/constants/color_constants.dart';
+import '../utils/constants/icon_constants.dart';
+import '../utils/constants/size_constants.dart';
+import '../utils/constants/text_constants.dart';
 import '../utils/widgets/form_text_field_widget.dart';
 
 class ValidateOTPScreen extends StatefulWidget {
@@ -31,145 +29,166 @@ class _ValidateOTPScreenState extends State<ValidateOTPScreen> {
     var screenHeight = size.height;
 
     return Scaffold(
-        backgroundColor: ColorPalette.primaryColor,
+        backgroundColor: ColorConstants.primaryColor,
         // appBar:
         //     AppBarWidget.functionAppBarBackButton(TextValues.addCompanyAppBarTitleText, context),
         body: SingleChildScrollView(
           child: Column(
             children: [
               Container(
-                color: ColorPalette.primaryColor,
-                height: screenHeight / SizeValues.screenHeightDivideBy,
+                color: ColorConstants.primaryColor,
+                height: screenHeight / SizeConstants.screenHeightDivideBy,
                 width: screenWidth,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.all(SizeValues.signIgnImagePaddingAll),
-                  child: Image.asset(TextValues.appLogoImageLink),
+                  padding: const EdgeInsets.all(
+                      SizeConstants.signIgnImagePaddingAll),
+                  child: Image.asset(TextConstants.appLogoImageLink),
                 ),
               ),
-              Container(
-                decoration: const BoxDecoration(
-                    color: ColorPalette.signInScreenColor,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(
-                            SizeValues.signInScreenTopLeftRadius))),
-                height: screenHeight * SizeValues.screenHeightTop / SizeValues.screenHeightDivideBy,
-                width: screenWidth,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          SizeValues.titleTextPaddingHorizontal,
-                          SizeValues.titleTextPaddingTop,
-                          SizeValues.titleTextPaddingHorizontal,
-                          SizeValues.titleTextPaddingBottom),
-                      child: Text(
-                        TextValues.validateOTPTitleText,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: SizeValues.titleTextFontSize,
-                            color: ColorPalette.titleText),
+              Form(
+                key: formKey,
+                child: Container(
+                  decoration: const BoxDecoration(
+                      color: ColorConstants.signInScreenColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(
+                              SizeConstants.signInScreenTopLeftRadius))),
+                  height: screenHeight *
+                      SizeConstants.screenHeightTop /
+                      SizeConstants.screenHeightDivideBy,
+                  width: screenWidth,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            SizeConstants.titleTextPaddingHorizontal,
+                            SizeConstants.titleTextPaddingTop,
+                            SizeConstants.titleTextPaddingHorizontal,
+                            SizeConstants.titleTextPaddingBottom),
+                        child: Text(
+                          TextConstants.validateOTPTitleText,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.titleTextFontSize,
+                              color: ColorConstants.titleText),
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                          SizeValues.textFieldPaddingHorizontal,
-                          SizeValues.textFieldPaddingTop,
-                          SizeValues.textFieldPaddingHorizontal,
-                          SizeValues.textFieldPaddingBottom),
-                      child: FormTextFieldWidget.functionTextFormField(
-                          otp,
-                          TextValues.otp,
-                          false,
-                          const Icon(IconPalette.otp),
-                          ValidatorService.validateOTP),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                          SizeValues.rightSideTextPaddingRight,
-                          SizeValues.rightSideTextPaddingTop,
-                          SizeValues.rightSideTextPaddingRight,
-                          SizeValues.rightSideTextPaddingBottom),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) =>
-                              //             const ForgotPasswordScreen()));
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                            SizeConstants.textFieldPaddingHorizontal,
+                            SizeConstants.textFieldPaddingTop,
+                            SizeConstants.textFieldPaddingHorizontal,
+                            SizeConstants.textFieldPaddingBottom),
+                        child: FormTextFieldWidget.functionTextFormField(
+                            true,
+                            TextEditingController(text: otp),
+                            (value) {
+                              otp = value;
+                            },
+                            TextConstants.otp,
+                            false,
+                            const Icon(IconConstants.otp),
+                            (value) {
+                              if (value!.isEmpty) {
+                                return TextConstants.emptyValueValidation;
+                              } else if (value.length < 4) {
+                                return TextConstants.passwordLengthValidation;
+                              }
+                              return null;
+                            }),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                            SizeConstants.rightSideTextPaddingRight,
+                            SizeConstants.rightSideTextPaddingTop,
+                            SizeConstants.rightSideTextPaddingRight,
+                            SizeConstants.rightSideTextPaddingBottom),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) =>
+                                //             const ForgotPasswordScreen()));
+                              },
+                              child: const Text(
+                                TextConstants.validateOTPLink,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize:
+                                        SizeConstants.validateOTPLinkFontSize,
+                                    color: ColorConstants.validateOTPLinkText),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                              SizeConstants.buttonPaddingHorizontal,
+                              SizeConstants.buttonPaddingTop,
+                              SizeConstants.buttonPaddingHorizontal,
+                              SizeConstants.buttonPaddingBottom),
+                          child: TextButton(
+                            style: ButtonStyle(
+                              fixedSize: MaterialStatePropertyAll(Size(
+                                  screenWidth,
+                                  screenHeight / SizeConstants.buttonHeight)),
+                              backgroundColor: ColorConstants.buttonColor,
+                              foregroundColor: ColorConstants.buttonTextColor,
+                              shadowColor: ColorConstants.buttonShadowColor,
+                            ),
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                UserService()
+                                    .validateOTP(otp)
+                                    .then((val) async {
+                                  if (val.data['success']) {
+                                    Fluttertoast.showToast(
+                                        msg: TextConstants
+                                            .validateOTPButtonSuccessToast,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor:
+                                            ColorConstants.toastSuccessColor,
+                                        textColor:
+                                            ColorConstants.toastTextColor,
+                                        fontSize: SizeConstants.toastFontSize);
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: TextConstants
+                                            .validateOTPButtonErrorToast,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor:
+                                            ColorConstants.toastErrorColor,
+                                        textColor:
+                                            ColorConstants.toastTextColor,
+                                        fontSize: SizeConstants.toastFontSize);
+                                  }
+                                });
+                              } else {
+                                log(TextConstants.buttonLogError);
+                              }
                             },
                             child: const Text(
-                              TextValues.validateOTPLink,
+                              TextConstants.validateOTPButtonText,
                               style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: SizeValues.validateOTPLinkFontSize,
-                                  color: ColorPalette.validateOTPLinkText),
+                                fontWeight: FontWeight.bold,
+                                fontSize: SizeConstants.buttonFontSize,
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                            SizeValues.buttonPaddingHorizontal,
-                            SizeValues.buttonPaddingTop,
-                            SizeValues.buttonPaddingHorizontal,
-                            SizeValues.buttonPaddingBottom),
-                        child: TextButton(
-                          style: ButtonStyle(
-                            fixedSize: MaterialStatePropertyAll(Size(
-                                screenWidth,
-                                screenHeight / SizeValues.buttonHeight)),
-                            backgroundColor: ColorPalette.buttonColor,
-                            foregroundColor: ColorPalette.buttonTextColor,
-                            shadowColor: ColorPalette.buttonShadowColor,
-                          ),
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              UserService().validateOTP(otp).then((val) async {
-                                if (val.data['success']) {
-                                  Fluttertoast.showToast(
-                                      msg: TextValues
-                                          .validateOTPButtonSuccessToast,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor:
-                                          ColorPalette.toastSuccessColor,
-                                      textColor: ColorPalette.toastTextColor,
-                                      fontSize: SizeValues.toastFontSize);
-                                } else {
-                                  Fluttertoast.showToast(
-                                      msg: TextValues
-                                          .validateOTPButtonErrorToast,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor:
-                                          ColorPalette.toastErrorColor,
-                                      textColor: ColorPalette.toastTextColor,
-                                      fontSize: SizeValues.toastFontSize);
-                                }
-                              });
-                            } else {
-                              log(TextValues.buttonLogError);
-                            }
-                          },
-                          child: const Text(
-                            TextValues.validateOTPButtonText,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: SizeValues.buttonFontSize,
-                            ),
-                          ),
-                        )),
-                  ],
+                          )),
+                    ],
+                  ),
                 ),
               ),
             ],
