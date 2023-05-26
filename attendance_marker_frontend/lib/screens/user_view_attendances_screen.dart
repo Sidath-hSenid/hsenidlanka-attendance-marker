@@ -1,10 +1,8 @@
-import 'package:attendance_marker_frontend/screens/single_company_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/company_model.dart';
 import '../utils/constants/backend_api_constants.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/model_constants.dart';
@@ -27,21 +25,23 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
   @override
   void initState() {
     super.initState();
-    getAllAttendances();
+    getAllAttendancesByUser();
   }
 
   // ---------------------------------------------- Get All Attendances Function Start ----------------------------------------------
 
-  CompanyModel? companyDataFromAPI;
-  getAllAttendances() async {
+  getAllAttendancesByUser() async {
     Dio dio = Dio();
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var accessToken = prefs.getString(ModelConstants.token);
+    var userId = prefs.getString(ModelConstants.sharedUserId).toString();
 
     try {
       response = await dio.get(
-        BackendAPIConstants.rootAPI + BackendAPIConstants.getAllAttendancesAPI,
+        BackendAPIConstants.rootAPI +
+            BackendAPIConstants.getAttendanceByUserIdAPI +
+            userId,
         options: Options(
           contentType: Headers.jsonContentType,
           headers: {ModelConstants.auth: "Bearer $accessToken"},
@@ -50,7 +50,8 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
 
       if (response.statusCode == 200) {
         var items = response.data;
-        ToastWidget.functionToastWidget(TextConstants.userAllAttendanceSuccessToast,
+        ToastWidget.functionToastWidget(
+            TextConstants.userAllAttendanceSuccessToast,
             ColorConstants.toastSuccessColor);
         setState(() {
           attendances = items;
@@ -69,6 +70,8 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
           e.toString(), ColorConstants.toastWarningColor);
     }
   }
+
+  // ---------------------------------------------- Get All Attendances Function End ----------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -108,19 +111,21 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                               TextConstants.attendancesImageLink,
                               height: screenHeight / 2,
                               width: screenWidth / 2,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(SizeConstants.cardPaddingAll),
+                                padding: const EdgeInsets.all(
+                                    SizeConstants.cardPaddingAll),
                                 child: Column(
                                   children: <Widget>[
                                     Row(
-                                      
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
@@ -143,7 +148,7 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                                     .cardContainerMaxHeight),
                                             Text(
                                               (attendances[index]
-                                                          [ModelConstants.date]
+                                                      [ModelConstants.date]
                                                   .toString()),
                                               maxLines: 1,
                                               style: TextStyle(
@@ -157,7 +162,8 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                           ],
                                         ),
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
@@ -165,7 +171,8 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                                 height: SizeConstants
                                                     .cardContainerMaxHeight),
                                             Text(
-                                              TextConstants.cardAttendanceWorkedHours,
+                                              TextConstants
+                                                  .cardAttendanceWorkedHours,
                                               maxLines: 1,
                                               style: TextStyle(
                                                 color: ColorConstants
@@ -179,8 +186,9 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                                 height: SizeConstants
                                                     .cardContainerMaxHeight),
                                             Text(
-                                              (attendances[index]
-                                                          [ModelConstants.workedHours].toString()),
+                                              (attendances[index][ModelConstants
+                                                      .workedHours]
+                                                  .toString()),
                                               maxLines: 1,
                                               style: TextStyle(
                                                 color: ColorConstants
@@ -195,10 +203,12 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                       ],
                                     ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
@@ -206,7 +216,8 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                                 height: SizeConstants
                                                     .cardContainerMaxHeight),
                                             Text(
-                                              TextConstants.cardAttendanceStartTime,
+                                              TextConstants
+                                                  .cardAttendanceStartTime,
                                               maxLines: 1,
                                               style: TextStyle(
                                                 color: ColorConstants
@@ -221,7 +232,7 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                                     .cardContainerMaxHeight),
                                             Text(
                                               (attendances[index]
-                                                          [ModelConstants.startTime]
+                                                      [ModelConstants.startTime]
                                                   .toString()),
                                               maxLines: 1,
                                               style: TextStyle(
@@ -235,7 +246,8 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                           ],
                                         ),
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
@@ -243,7 +255,8 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                                 height: SizeConstants
                                                     .cardContainerMaxHeight),
                                             Text(
-                                              TextConstants.cardAttendanceEndTime,
+                                              TextConstants
+                                                  .cardAttendanceEndTime,
                                               maxLines: 1,
                                               style: TextStyle(
                                                 color: ColorConstants
@@ -257,9 +270,15 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
                                                 height: SizeConstants
                                                     .cardContainerMaxHeight),
                                             Text(
-                                              (attendances[index]
-                                                          [ModelConstants.endTime]) != null ? (attendances[index]
-                                                          [ModelConstants.endTime].toString()) : TextConstants.notYetRecordedText,
+                                              (attendances[index][ModelConstants
+                                                          .endTime]) !=
+                                                      null
+                                                  ? (attendances[index][
+                                                          ModelConstants
+                                                              .endTime]
+                                                      .toString())
+                                                  : TextConstants
+                                                      .notYetRecordedText,
                                               maxLines: 1,
                                               style: TextStyle(
                                                 color: ColorConstants

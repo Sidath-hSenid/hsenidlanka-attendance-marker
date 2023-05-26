@@ -1,10 +1,10 @@
 import 'package:attendance_marker_frontend/screens/single_company_screen.dart';
+import 'package:attendance_marker_frontend/services/company_service.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/company_model.dart';
 import '../utils/constants/backend_api_constants.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/model_constants.dart';
@@ -31,7 +31,6 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
 
   // ---------------------------------------------- Get All Companies Function Start ----------------------------------------------
 
-  CompanyModel? companyDataFromAPI;
   getAllCompanies() async {
     Dio dio = Dio();
     Response response;
@@ -62,7 +61,6 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
           companies = [];
         });
       }
-      // return json.decode(response.data);
       return response.data;
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
@@ -70,12 +68,11 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
     }
   }
 
+  // ---------------------------------------------- Get All Companies Function End ----------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: UserAppBarWidget.functionAppBarInside(
-      //     TextConstants.allCompaniesAppBarTitleText, context),
-      // drawer: NavigationalDrawerWidget.functionUserNavigationalDrawer(context),
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -86,8 +83,7 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () async {
-                    var companyId =
-                        companies[index][ModelConstants.companyId];
+                    var companyId = companies[index][ModelConstants.companyId];
                     var companyName =
                         companies[index][ModelConstants.companyName];
                     var companyLocation =
@@ -101,6 +97,59 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
                                 comName: companyName,
                                 comLocation: companyLocation)));
                   },
+                  onLongPress: () {
+                    var companyId =
+                        companies[index][ModelConstants.companyId];
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text(
+                              TextConstants.alertTitle,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: SizeConstants.alertTitleFontSize,
+                                  color: ColorConstants.primaryColor),
+                            ),
+                            content: const Text(
+                              TextConstants.alertDeleteContent,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: SizeConstants.alertContentFontSize,
+                                  color: ColorConstants.primaryColor),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text(
+                                  TextConstants.alertButtonCancel,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          SizeConstants.alertButtonFontSize,
+                                      color: ColorConstants.primaryColor),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text(
+                                  TextConstants.alertButtonConfirm,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          SizeConstants.alertButtonFontSize,
+                                      color: ColorConstants.primaryColor),
+                                ),
+                                onPressed: () {
+                                  CompanyService().deleteCompanyById(
+                                      companyId, context);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  },
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(
                         SizeConstants.cardPaddingHorizontal,
@@ -109,8 +158,8 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
                         SizeConstants.cardPaddingBottom),
                     child: Card(
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(SizeConstants.cardBorderRadius),
+                        borderRadius: BorderRadius.circular(
+                            SizeConstants.cardBorderRadius),
                       ),
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: Column(
@@ -120,19 +169,20 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
                             padding: const EdgeInsets.all(
                                 SizeConstants.cardPaddingAll),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Image.asset(
                                   TextConstants.companiesImageLink,
                                   height: SizeConstants.cardImageHeight,
                                   width: SizeConstants.cardImageWidth,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                 ),
                                 Container(
                                     width: SizeConstants.cardContainerWidth),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Container(
                                           height: SizeConstants
@@ -159,8 +209,8 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
                                           color:
                                               ColorConstants.cardValueTextColor,
                                           fontWeight: FontWeight.normal,
-                                          fontSize:
-                                              SizeConstants.cardValueTextFontSize,
+                                          fontSize: SizeConstants
+                                              .cardValueTextFontSize,
                                         ),
                                       ),
                                       Container(
@@ -189,8 +239,8 @@ class _AllCompaniesScreenState extends State<AllCompaniesScreen> {
                                           color:
                                               ColorConstants.cardValueTextColor,
                                           fontWeight: FontWeight.normal,
-                                          fontSize:
-                                              SizeConstants.cardValueTextFontSize,
+                                          fontSize: SizeConstants
+                                              .cardValueTextFontSize,
                                         ),
                                       ),
                                     ],

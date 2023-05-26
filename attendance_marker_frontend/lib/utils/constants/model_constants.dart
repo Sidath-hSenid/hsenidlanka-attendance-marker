@@ -7,6 +7,7 @@ class ModelConstants {
   static const String companyModel = "company";
   static const String token = "token";
   static const String user = "user";
+  static const String statCode = "statCode";
   static const String userRoles = "roles";
   static const String userRole = "user";
   static const List<dynamic> authRole = ["ROLE_USER"];

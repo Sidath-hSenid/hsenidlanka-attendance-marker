@@ -1,6 +1,8 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class BackendAPIConstants {
-  static const String rootAPI = 'http://10.0.2.2:8080/api';
-  // static const String rootAPI = 'http://192.168.1.38:8080/api';
+  static String rootAPI = dotenv.env['BACKEND_API'].toString();
+  // static String rootAPI = dotenv.env['BACKEND_IP_ADDRESS_API'].toString();
 
   // User API
   static const String loginAPI = '/auth/login';
@@ -12,6 +14,7 @@ class BackendAPIConstants {
   static const String resetPasswordAPI = '/test/users/reset-password';
   static const String updateUserByIdAPI = '/test/users/';
   static const String deleteUserByIdAPI = '/test/users/';
+  static const String getUsersByCompanyIdAPI = '/test/users/company-id/';
 
   // Company API
   static const String addCompanyAPI = '/test/companies';
@@ -24,8 +27,11 @@ class BackendAPIConstants {
   static const String getAllAttendancesAPI = "/test/attendances";
   static const String addAttendanceAPI = '/test/attendances';
   static const String getAttendanceByIdAPI = '/test/attendances/';
-  static const String updateAttendanceEndTimeByIdAPI = '/test/attendances/update-end-time/';
+  static const String updateAttendanceEndTimeByIdAPI =
+      '/test/attendances/update-end-time/';
   static const String updateAttendanceByIdAPI = '/test/attendances/';
   static const String deleteAttendanceByIdAPI = '/test/attendances/';
-  static const String getAttendanceByUserIdAndDateAPI = '/test/attendances/by-user-id/';
+  static const String getAttendanceByUserIdAndDateAPI =
+      '/test/attendances/user-id-date/';
+  static const String getAttendanceByUserIdAPI = '/test/attendances/user-id/';
 }

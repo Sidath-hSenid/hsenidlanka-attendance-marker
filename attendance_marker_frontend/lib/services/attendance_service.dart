@@ -11,30 +11,36 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:geocoding/geocoding.dart';
 
+import '../screens/user_home_screen.dart';
+import '../utils/constants/size_constants.dart';
 import '../utils/widgets/toast_widget.dart';
 
 class AttendanceService {
   Dio dio = Dio();
 
-  // // Get Location
-  // Future<String> getCurrentLocationPlusCode() async {
-  //   try {
-  //     final position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high,
-  //     );
-  //     final addresses = await placemarkFromCoordinates(
-  //       position.latitude,
-  //       position.longitude,
-  //     );
+  // ---------------------------------------------- Get Current Location Function Start ----------------------------------------------
 
-  //     final address = addresses.first;
-  //     return address.;
-  //   } catch (e) {
-  //     return e.toString();
-  //   }
-  // }
+  Future<String> getCurrentLocationPlusCode() async {
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final addresses = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      final address = addresses.first;
+      return address.name.toString();
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  // ---------------------------------------------- Get Current Location Function End ----------------------------------------------
 
   // ---------------------------------------------- Add New Attendance Function Start ----------------------------------------------
+
   addAttendance(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var accessToken = prefs.getString(ModelConstants.token);
@@ -42,8 +48,7 @@ class AttendanceService {
       DateTime today = DateTime.now();
       String date = "${today.year}-${today.month}-${today.day}";
       String startTime = "${today.hour}:${today.minute}";
-      String? location = "7JVP+3RH Kandy";
-      // String location = await getCurrentLocationPlusCode();
+      String location = await getCurrentLocationPlusCode();
 
       String userId = prefs.getString(ModelConstants.sharedUserId).toString();
       String username = prefs.getString(ModelConstants.username).toString();
@@ -54,7 +59,7 @@ class AttendanceService {
           prefs.getString(ModelConstants.sharedCompanyId).toString();
       String companyLocation =
           prefs.getString(ModelConstants.companyLocation).toString();
-      if (location.toString() == companyLocation) {
+      if (location == companyLocation) {
         Response res;
         res = await dio.get(
           BackendAPIConstants.rootAPI +
@@ -98,8 +103,10 @@ class AttendanceService {
             );
 
             if (response.statusCode == 201) {
-              // Navigator.pushReplacement(context,
-              //     MaterialPageRoute(builder: (context) => const UserHomeScreen()));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UserHomeScreen()));
               var sharedAttendanceId =
                   response.data[ModelConstants.attendanceId];
               prefs.setString(ModelConstants.sharedAttendanceId,
@@ -113,25 +120,83 @@ class AttendanceService {
                   TextConstants.addAttendanceErrorToast,
                   ColorConstants.toastErrorColor);
 
-              // Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => UserHomeScreen()));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UserHomeScreen()));
             }
           } else {
-            // Navigator.pushReplacement(context,
-            //       MaterialPageRoute(builder: (context) => const UserHomeScreen()));
-            ToastWidget.functionToastWidget(
-                TextConstants.alreadyAddedAttendanceErrorToast,
-                ColorConstants.toastErrorColor);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text(
+                      TextConstants.alertTitle,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConstants.alertTitleFontSize,
+                          color: ColorConstants.errorBorder),
+                    ),
+                    content: const Text(
+                      TextConstants.alreadyAddedAttendanceErrorToast,
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: SizeConstants.alertContentFontSize,
+                          color: ColorConstants.errorBorder),
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text(
+                          TextConstants.alertButtonOk,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertButtonFontSize,
+                              color: ColorConstants.errorBorder),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                });
           }
         } else {}
       } else {
-        // Navigator.pushReplacement(context,
-        //       MaterialPageRoute(builder: (context) => const UserHomeScreen()));
-        ToastWidget.functionToastWidget(
-            TextConstants.attendanceLocationErrorToast,
-            ColorConstants.toastErrorColor);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text(
+                  TextConstants.alertTitle,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: SizeConstants.alertTitleFontSize,
+                      color: ColorConstants.errorBorder),
+                ),
+                content: const Text(
+                  TextConstants.attendanceLocationErrorToast,
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: SizeConstants.alertContentFontSize,
+                      color: ColorConstants.errorBorder),
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text(
+                      TextConstants.alertButtonOk,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConstants.alertButtonFontSize,
+                          color: ColorConstants.errorBorder),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
       }
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
@@ -139,7 +204,10 @@ class AttendanceService {
     }
   }
 
+  // ---------------------------------------------- Add New Attendance Function End ----------------------------------------------
+
   // ---------------------------------------------- Update Attendance End Time By Id Function Start ----------------------------------------------
+
   updateDayAttendanceEndTimeById(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var accessToken = prefs.getString(ModelConstants.token);
@@ -147,13 +215,12 @@ class AttendanceService {
       DateTime today = DateTime.now();
       String date = "${today.year}-${today.month}-${today.day}";
       String endTime = "${today.hour}:${today.minute}";
-      String? location = "7JVP+3RH Kandy";
-      // String location = await getCurrentLocationPlusCode();
+      String location = await getCurrentLocationPlusCode();
 
       String companyLocation =
           prefs.getString(ModelConstants.companyLocation).toString();
 
-      if (location.toString() == companyLocation) {
+      if (location == companyLocation) {
         var userId = prefs.getString(ModelConstants.sharedUserId).toString();
         Response res;
         res = await dio.get(
@@ -182,10 +249,10 @@ class AttendanceService {
                 int timeDifference = today.difference(attStartTime).inHours;
 
                 if (timeDifference.isNegative) {
-                  // Navigator.pushReplacement(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => UserHomeScreen()));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const UserHomeScreen()));
 
                   ToastWidget.functionToastWidget(
                       TextConstants.startTimeValidation,
@@ -213,11 +280,10 @@ class AttendanceService {
                     if (response.statusCode == 200) {
                       prefs.remove(ModelConstants.attendanceId);
                       prefs.remove(ModelConstants.startTime);
-                      // Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>
-                      //             const UserHomeScreen()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UserHomeScreen()));
 
                       ToastWidget.functionToastWidget(
                           TextConstants.updateAttendanceEndTimeSuccessToast,
@@ -227,10 +293,10 @@ class AttendanceService {
                           TextConstants.updateAttendanceEndTimeErrorToast,
                           ColorConstants.toastErrorColor);
 
-                      // Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => UserHomeScreen()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UserHomeScreen()));
                     }
                   } else if (workedHours >= ModelConstants.fullDayTime &&
                       workedHours < ModelConstants.overWorkedDayTime) {
@@ -253,11 +319,10 @@ class AttendanceService {
                     if (response.statusCode == 200) {
                       prefs.remove(ModelConstants.attendanceId);
                       prefs.remove(ModelConstants.startTime);
-                      // Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>
-                      //             const UserHomeScreen()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UserHomeScreen()));
 
                       ToastWidget.functionToastWidget(
                           TextConstants.updateAttendanceEndTimeSuccessToast,
@@ -267,45 +332,156 @@ class AttendanceService {
                           TextConstants.updateAttendanceEndTimeErrorToast,
                           ColorConstants.toastErrorColor);
 
-                      // Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => UserHomeScreen()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UserHomeScreen()));
                     }
                   } else {
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => UserHomeScreen()));
-
-                    ToastWidget.functionToastWidget(
-                        TextConstants.wrongTimeRangeErrorToast,
-                        ColorConstants.toastErrorColor);
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text(
+                              TextConstants.alertTitle,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: SizeConstants.alertTitleFontSize,
+                                  color: ColorConstants.errorBorder),
+                            ),
+                            content: const Text(
+                              TextConstants.wrongTimeRangeErrorToast,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: SizeConstants.alertContentFontSize,
+                                  color: ColorConstants.errorBorder),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text(
+                                  TextConstants.alertButtonOk,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          SizeConstants.alertButtonFontSize,
+                                      color: ColorConstants.errorBorder),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
                   }
                 }
               } else {
-                ToastWidget.functionToastWidget(
-                    TextConstants.alreadyUpdatedAttendanceErrorToast,
-                    ColorConstants.toastErrorColor);
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                          TextConstants.alertTitle,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertTitleFontSize,
+                              color: ColorConstants.errorBorder),
+                        ),
+                        content: const Text(
+                          TextConstants.alreadyUpdatedAttendanceErrorToast,
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: SizeConstants.alertContentFontSize,
+                              color: ColorConstants.errorBorder),
+                        ),
+                        actions: [
+                          TextButton(
+                            child: const Text(
+                              TextConstants.alertButtonOk,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: SizeConstants.alertButtonFontSize,
+                                  color: ColorConstants.errorBorder),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    });
               }
             } else {
-              // Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => UserHomeScreen()));
-
-              ToastWidget.functionToastWidget(
-                  TextConstants.haveNotAddedAttendanceErrorToast,
-                  ColorConstants.toastErrorColor);
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text(
+                        TextConstants.alertTitle,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConstants.alertTitleFontSize,
+                            color: ColorConstants.errorBorder),
+                      ),
+                      content: const Text(
+                        TextConstants.haveNotAddedAttendanceErrorToast,
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: SizeConstants.alertContentFontSize,
+                            color: ColorConstants.errorBorder),
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text(
+                            TextConstants.alertButtonOk,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: SizeConstants.alertButtonFontSize,
+                                color: ColorConstants.errorBorder),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  });
             }
           } else {
-            // Date Validation
-            // Navigator.pushReplacement(context,
-            //     MaterialPageRoute(builder: (context) => const UserHomeScreen()));
-
-            ToastWidget.functionToastWidget(
-                TextConstants.attendanceDateErrorToast,
-                ColorConstants.toastErrorColor);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text(
+                      TextConstants.alertTitle,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConstants.alertTitleFontSize,
+                          color: ColorConstants.errorBorder),
+                    ),
+                    content: const Text(
+                      TextConstants.attendanceDateErrorToast,
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: SizeConstants.alertContentFontSize,
+                          color: ColorConstants.errorBorder),
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text(
+                          TextConstants.alertButtonOk,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertButtonFontSize,
+                              color: ColorConstants.errorBorder),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                });
           }
         } else {
           ToastWidget.functionToastWidget(
@@ -313,11 +489,40 @@ class AttendanceService {
               ColorConstants.toastErrorColor);
         }
       } else {
-        // Navigator.pushReplacement(context,
-        //       MaterialPageRoute(builder: (context) => const UserHomeScreen()));
-        ToastWidget.functionToastWidget(
-            TextConstants.attendanceLocationErrorToast,
-            ColorConstants.toastErrorColor);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text(
+                  TextConstants.alertTitle,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: SizeConstants.alertTitleFontSize,
+                      color: ColorConstants.errorBorder),
+                ),
+                content: const Text(
+                  TextConstants.attendanceLocationErrorToast,
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: SizeConstants.alertContentFontSize,
+                      color: ColorConstants.errorBorder),
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text(
+                      TextConstants.alertButtonOk,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConstants.alertButtonFontSize,
+                          color: ColorConstants.errorBorder),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
       }
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
@@ -325,7 +530,10 @@ class AttendanceService {
     }
   }
 
+  // ---------------------------------------------- Update Attendance End Time By Id Function End ----------------------------------------------
+
   // ---------------------------------------------- Update Attendance By Id Function Start ----------------------------------------------
+
   updateAttendanceById(date, attendanceId, startTime, endTime, workedHours,
       username, companyName, companyLocation, context) async {
     Response response;
@@ -368,7 +576,7 @@ class AttendanceService {
                       attId: attendanceId,
                       attDate: date,
                       attStartTime: startTime,
-                      attEndTime: endTime,
+                      attEndTime: endTime.toString(),
                       attWorkedHours: (workedHours).toString(),
                       attUsername: username,
                       attCompanyName: companyName,
@@ -381,7 +589,10 @@ class AttendanceService {
     }
   }
 
+  // ---------------------------------------------- Update Attendance By Id Function End ----------------------------------------------
+
   // ---------------------------------------------- Delete Attendance By Id Function Start ----------------------------------------------
+
   deleteAttendanceById(attendanceId, context) async {
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -422,3 +633,5 @@ class AttendanceService {
     }
   }
 }
+
+// ---------------------------------------------- Delete Attendance By Id Function End ----------------------------------------------

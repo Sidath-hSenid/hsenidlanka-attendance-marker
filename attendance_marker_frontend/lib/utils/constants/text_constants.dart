@@ -1,14 +1,13 @@
 class TextConstants {
   // Application Texts
-  static const String appTitle = "Attendance Marker";
+  static const String appTitle = "ATTENDANCE MARKER";
 
   // Validation Texts
   static const String emptyValueValidation = "Field can not be empty!";
   static const String emptySelectValidation = 'Please select an option!';
   static const String passwordLengthValidation =
       "Password must contain at least 8 characters!";
-  static const String passwordStrengthValidation =
-      "Your password is too week!";
+  static const String passwordStrengthValidation = "Your password is too week!";
   static const String emailValidation = "Please enter valid email address!";
   static const String otpValidation = "Please enter valid OTP!";
   static const String passwordMisMatchValidation = "Passwords mismatching!";
@@ -76,7 +75,7 @@ class TextConstants {
   static const String updateUserSuccessToast = "User updated successfully!";
   static const String updateUserErrorToast = "Unable to update the user!";
   static const String deleteUserSuccessToast = "User deleted successfully!";
-  static const String deleteUserErrorToast = "Unable to delete the user!";
+  static const String deleteUserErrorToast = "Unable to delete the user. User may have recoreded attendances!";
   static const String signUpButtonSuccessToast = "User registered!";
   static const String signUpButtonAlreadyErrorToast = "User already exists!";
 
@@ -96,7 +95,7 @@ class TextConstants {
   static const String updateCompanyErrorToast = "Unable to update the company!";
   static const String deleteCompanySuccessToast =
       "Company deleted successfully!";
-  static const String deleteCompanyErrorToast = "Unable to delete the company!";
+  static const String deleteCompanyErrorToast = "Unable to delete the company. Company may have registered users!";
 
   // Attendance Toast Texts
   static const String allAttendanceSuccessToast = "Attendances available!";
@@ -130,7 +129,10 @@ class TextConstants {
   static const String attendanceDateErrorToast =
       "Current date is not equal to your time started date!";
   static const String wrongTimeRangeErrorToast = "Wrong working hours!";
-  static const String userAllAttendanceSuccessToast = "Slide left to view your previous attendances!";
+  static const String userAllAttendanceSuccessToast =
+      "Slide left to view your previous attendances!";
+  static const String addCompanyButtonAlreadyErrorToast =
+      "Company already exists or somthing went wrong!";
 
   // Log Error Texts
   static const String buttonLogError = "Error!";
@@ -155,6 +157,8 @@ class TextConstants {
   static const String allAttendancesAppBarTitleText = "MARKED ATTENDANCES";
   static const String manageAttendancesAppBarTitleText = "MANAGE ATTENDANCES";
   static const String detailsAttendanceAppBarTitleText = "ATTENDANCE DETAILS";
+  static const String detailsAttendancesAppBarTitleText = "USER'S ATTENDANCES";
+  static const String detailUsersAppBarTitleText = "COMPANY'S USERS";
   static const String viewUserAttendancesTitleText = "YOUR ATTENDANCES";
   static const String addStartTimeTitleText = "START TIME";
   static const String addEndTimeTitleText = "END TIME";
@@ -166,11 +170,15 @@ class TextConstants {
   // Image Link Texts
   static const String appLogoImageLink = "assets/images/app-logo.png";
   static const String addCompanyImageLink = "assets/images/add-company.png";
-  static const String companiesImageLink = "assets/images/companies.png";
-  static const String usersImageLink = "assets/images/users.png";
-  static const String attendancesImageLink = "assets/images/users.png";
+  static const String companiesImageLink = "assets/images/card-company.png";
+  static const String usersImageLink = "assets/images/card-user.png";
+  static const String attendancesImageLink = "assets/images/card-attendance.png";
   static const String addUserImageLink = "assets/images/add-user.png";
   static const String fingerPrintImageLink = "assets/images/finger-print.png";
+  static const String companiesCardImageLink = "assets/images/card-company.png";
+  static const String usersCardImageLink = "assets/images/card-user.png";
+  static const String attendacesCardImageLink = "assets/images/card-attendance.png";
+  static const String addAttendanceImageLink = "assets/images/add-attendance.png";
 
   // Drawer Texts
   static const String drawerHome = "Home";
@@ -192,8 +200,28 @@ class TextConstants {
   static const String cardAttendanceUserCompany = "Company";
   static const String cardAttendanceWorkedHours = "Worked hours";
   static const String notYetRecordedText = "Not yet recorded";
+  static const String adminCardCompanyTitle = "COMPANIES";
+  static const String adminCardUserTitle = "USERS";
+  static const String adminCardAttendancesTitle = "ATTENDANCES";
+  static const String adminCardCompanySubTitle = "Manage company details.";
+  static const String adminCardUserSubTitle = "Manage user details.";
+  static const String adminCardAttendancesSubTitle = "Manage attendance details.";
+
+  // Alert Texts
+  static const String alertTitle = "ALERT";
+  static const String alertDeleteContent = "Are you sure you want to delete this content.";
+  static const String alertUpdateContent = "Are you sure you want to update this content.";
+  static const String alertAddContent = "Are you sure you want to add this content.";
+  static const String alertAddStartTime = "Are you sure you want to add start time now.";
+  static const String alertAddEndTime = "Are you sure you want to add end time now.";
+  static const String alertResetPassword = "Are you sure you want to reset your password.";
+  static const String alertButtonConfirm = "CONFIRM";
+  static const String alertButtonCancel = "CANCEL";
+  static const String alertButtonOk = "OK";
 
   // Screen Texts
-  static const String addStartTimeText = "⚠️ Please tap on the finger print image to enter your start time. Please note that the start time can be set only once per day.";
-  static const String addEndTimeText = "⚠️ Please tap on the finger print image to enter your end time. Please note that the end time can be set only once per day and the end time can be set only if you have previously set the start time for that day.";
+  static const String addStartTimeText =
+      "⚠️ Please tap on the finger print image to enter your start time. Please note that the start time can be set only once per day.";
+  static const String addEndTimeText =
+      "⚠️ Please tap on the finger print image to enter your end time. Please note that the end time can be set only once per day and the end time can be set only if you have previously set the start time for that day.";
 }

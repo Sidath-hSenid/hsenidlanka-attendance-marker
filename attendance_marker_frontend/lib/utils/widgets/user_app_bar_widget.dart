@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../services/attendance_service.dart';
 import '../../services/user_service.dart';
 import '../constants/color_constants.dart';
+import '../constants/text_constants.dart';
 
 class UserAppBarWidget {
   static functionAppBarInside(var appBarTextValue, var context) {
@@ -98,7 +99,53 @@ class UserAppBarWidget {
             size: SizeConstants.appBarIconSize,
           ),
           onPressed: () {
-            CompanyService().deleteCompanyById(companyIdValue, context);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text(
+                      TextConstants.alertTitle,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConstants.alertTitleFontSize,
+                          color: ColorConstants.primaryColor),
+                    ),
+                    content: const Text(
+                      TextConstants.alertDeleteContent,
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: SizeConstants.alertContentFontSize,
+                          color: ColorConstants.primaryColor),
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text(
+                          TextConstants.alertButtonCancel,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertButtonFontSize,
+                              color: ColorConstants.primaryColor),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text(
+                          TextConstants.alertButtonConfirm,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertButtonFontSize,
+                              color: ColorConstants.primaryColor),
+                        ),
+                        onPressed: () {
+                          CompanyService()
+                              .deleteCompanyById(companyIdValue, context);
+                        },
+                      ),
+                    ],
+                  );
+                });
           },
         ),
       ],
@@ -130,7 +177,52 @@ class UserAppBarWidget {
             size: SizeConstants.appBarIconSize,
           ),
           onPressed: () {
-            UserService().deleteUserById(userIdValue, context);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text(
+                      TextConstants.alertTitle,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConstants.alertTitleFontSize,
+                          color: ColorConstants.primaryColor),
+                    ),
+                    content: const Text(
+                      TextConstants.alertDeleteContent,
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: SizeConstants.alertContentFontSize,
+                          color: ColorConstants.primaryColor),
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text(
+                          TextConstants.alertButtonCancel,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertButtonFontSize,
+                              color: ColorConstants.primaryColor),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text(
+                          TextConstants.alertButtonConfirm,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertButtonFontSize,
+                              color: ColorConstants.primaryColor),
+                        ),
+                        onPressed: () {
+                          UserService().deleteUserById(userIdValue, context);
+                        },
+                      ),
+                    ],
+                  );
+                });
           },
         ),
       ],
@@ -162,11 +254,56 @@ class UserAppBarWidget {
             size: SizeConstants.appBarIconSize,
           ),
           onPressed: () {
-            AttendanceService().deleteAttendanceById(attendanceIdValue, context);
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text(
+                      TextConstants.alertTitle,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConstants.alertTitleFontSize,
+                          color: ColorConstants.primaryColor),
+                    ),
+                    content: const Text(
+                      TextConstants.alertDeleteContent,
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: SizeConstants.alertContentFontSize,
+                          color: ColorConstants.primaryColor),
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text(
+                          TextConstants.alertButtonCancel,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertButtonFontSize,
+                              color: ColorConstants.primaryColor),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text(
+                          TextConstants.alertButtonConfirm,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertButtonFontSize,
+                              color: ColorConstants.primaryColor),
+                        ),
+                        onPressed: () {
+                          AttendanceService()
+                              .deleteAttendanceById(attendanceIdValue, context);
+                        },
+                      ),
+                    ],
+                  );
+                });
           },
         ),
       ],
     );
   }
-
 }

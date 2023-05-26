@@ -2,8 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../services/user_service.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/icon_constants.dart';
@@ -30,8 +28,6 @@ class _ValidateOTPScreenState extends State<ValidateOTPScreen> {
 
     return Scaffold(
         backgroundColor: ColorConstants.primaryColor,
-        // appBar:
-        //     AppBarWidget.functionAppBarBackButton(TextValues.addCompanyAppBarTitleText, context),
         body: SingleChildScrollView(
           child: Column(
             children: [

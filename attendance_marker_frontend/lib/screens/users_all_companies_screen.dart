@@ -1,5 +1,4 @@
-import 'package:attendance_marker_frontend/screens/single_user_screen.dart';
-import 'package:attendance_marker_frontend/services/user_service.dart';
+import 'package:attendance_marker_frontend/screens/users_by_company_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,30 +8,30 @@ import '../utils/constants/color_constants.dart';
 import '../utils/constants/model_constants.dart';
 import '../utils/constants/size_constants.dart';
 import '../utils/constants/text_constants.dart';
-import '../utils/widgets/navigational_drawer_widget.dart';
 import '../utils/widgets/toast_widget.dart';
 
-class AllUsersScreen extends StatefulWidget {
-  const AllUsersScreen({super.key});
+class UsersAllCompaniesScreen extends StatefulWidget {
+  const UsersAllCompaniesScreen({super.key});
 
   @override
-  State<AllUsersScreen> createState() => _AllUsersScreenState();
+  State<UsersAllCompaniesScreen> createState() =>
+      _UsersAllCompaniesScreenState();
 }
 
-class _AllUsersScreenState extends State<AllUsersScreen> {
+class _UsersAllCompaniesScreenState extends State<UsersAllCompaniesScreen> {
   bool isLoading = true;
-  List users = [];
+  List companies = [];
   var formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    getAllUsers();
+    getAllCompanies();
   }
 
-  // ---------------------------------------------- Get All Users Function Start ----------------------------------------------
+  // ---------------------------------------------- Get All Companies Function Start ----------------------------------------------
 
-  getAllUsers() async {
+  getAllCompanies() async {
     Dio dio = Dio();
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,7 +39,7 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
 
     try {
       response = await dio.get(
-        BackendAPIConstants.rootAPI + BackendAPIConstants.getAllUsersAPI,
+        BackendAPIConstants.rootAPI + BackendAPIConstants.getAllCompaniesAPI,
         options: Options(
           contentType: Headers.jsonContentType,
           headers: {ModelConstants.auth: "Bearer $accessToken"},
@@ -49,19 +48,20 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
 
       if (response.statusCode == 200) {
         var items = response.data;
-        ToastWidget.functionToastWidget(TextConstants.allUserSuccessToast,
+        ToastWidget.functionToastWidget(TextConstants.allCompanySuccessToast,
             ColorConstants.toastSuccessColor);
         setState(() {
-          users = items;
+          companies = items;
         });
         isLoading = false;
       } else {
         ToastWidget.functionToastWidget(
-            TextConstants.allUserErrorToast, ColorConstants.toastErrorColor);
+            TextConstants.allCompanyErrorToast, ColorConstants.toastErrorColor);
         setState(() {
-          users = [];
+          companies = [];
         });
       }
+      // return json.decode(response.data);
       return response.data;
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
@@ -69,86 +69,29 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
     }
   }
 
-  // ---------------------------------------------- Get All Users Function End ----------------------------------------------
+  // ---------------------------------------------- Get All Companies Function End ----------------------------------------------
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavigationalDrawerWidget.functionAdminNavigationalDrawer(context),
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : ListView.builder(
               scrollDirection: Axis.vertical,
-              itemCount: users.length,
+              itemCount: companies.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () async {
-                    var userId = users[index][ModelConstants.userId];
-                    var username = users[index][ModelConstants.username];
-                    var email = users[index][ModelConstants.email];
-                    var company = users[index][ModelConstants.company];
+                    var companyId = companies[index][ModelConstants.companyId];
 
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SingleUserScreen(
-                                useId: userId,
-                                usename: username,
-                                useEmail: email,
-                                useCompany: company)));
-                  },
-                  onLongPress: () {
-                    var userId = users[index][ModelConstants.userId];
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text(
-                              TextConstants.alertTitle,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: SizeConstants.alertTitleFontSize,
-                                  color: ColorConstants.primaryColor),
-                            ),
-                            content: const Text(
-                              TextConstants.alertDeleteContent,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: SizeConstants.alertContentFontSize,
-                                  color: ColorConstants.primaryColor),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: const Text(
-                                  TextConstants.alertButtonCancel,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          SizeConstants.alertButtonFontSize,
-                                      color: ColorConstants.primaryColor),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: const Text(
-                                  TextConstants.alertButtonConfirm,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          SizeConstants.alertButtonFontSize,
-                                      color: ColorConstants.primaryColor),
-                                ),
-                                onPressed: () {
-                                  UserService().deleteUserById(userId, context);
-                                },
-                              ),
-                            ],
-                          );
-                        });
+                            builder: (context) => UsersByCompanyScreen(
+                                  comId: companyId,
+                                )));
                   },
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(
@@ -172,7 +115,7 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Image.asset(
-                                  TextConstants.usersImageLink,
+                                  TextConstants.companiesImageLink,
                                   height: SizeConstants.cardImageHeight,
                                   width: SizeConstants.cardImageWidth,
                                   fit: BoxFit.contain,
@@ -188,7 +131,7 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
                                           height: SizeConstants
                                               .cardContainerMinHeight),
                                       Text(
-                                        TextConstants.cardUsername,
+                                        TextConstants.cardCompanyName,
                                         style: TextStyle(
                                           color: ColorConstants
                                               .cardAttributeTextColor,
@@ -201,9 +144,10 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
                                           height: SizeConstants
                                               .cardContainerMinHeight),
                                       Text(
-                                        (users[index][ModelConstants.username]
+                                        (companies[index]
+                                                [ModelConstants.companyName]
                                             .toString()),
-                                        maxLines: 2,
+                                        maxLines: 3,
                                         style: TextStyle(
                                           color:
                                               ColorConstants.cardValueTextColor,
@@ -216,7 +160,7 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
                                           height: SizeConstants
                                               .cardContainerMaxHeight),
                                       Text(
-                                        TextConstants.cardUserCompany,
+                                        TextConstants.cardCompanyLocation,
                                         maxLines: 1,
                                         style: TextStyle(
                                           color: ColorConstants
@@ -228,12 +172,12 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
                                       ),
                                       Container(
                                           height: SizeConstants
-                                              .cardContainerMinHeight),
+                                              .cardContainerMaxHeight),
                                       Text(
-                                        (users[index][ModelConstants.company]
-                                                [ModelConstants.companyName]
+                                        (companies[index]
+                                                [ModelConstants.companyLocation]
                                             .toString()),
-                                        maxLines: 2,
+                                        maxLines: 1,
                                         style: TextStyle(
                                           color:
                                               ColorConstants.cardValueTextColor,

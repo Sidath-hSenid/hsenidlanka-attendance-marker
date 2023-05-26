@@ -51,6 +51,7 @@ class ColorConstants {
   static Color cardValueTextColor = Colors.grey.shade600;
   static Color userCardAttributeTextColor = Colors.black;
   static Color userCardValueTextColor = Colors.grey.shade400;
+  static const Color adminCardTextColor = Colors.white;
 
   // Info Colors
   static const Color infoTextColor = Colors.grey;

@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
-// import '../services/attendance_service.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/icon_constants.dart';
 import '../utils/constants/size_constants.dart';
@@ -91,12 +92,14 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                             left: SizeConstants.signIgnImagePaddingAll,
                             right: SizeConstants.signIgnImagePaddingAll,
                             top: SizeConstants.signIgnImagePaddingAll),
-                        child: Image.asset(TextConstants.addCompanyImageLink),
+                        child:
+                            Image.asset(TextConstants.addAttendanceImageLink),
                       ),
                     ),
                     Container(
                       color: ColorConstants.signInScreenColor,
-                      height: screenHeight * SizeConstants.screenHeightForAttendanceUpdate,
+                      height: screenHeight *
+                          SizeConstants.screenHeightForAttendanceUpdate,
                       width: screenWidth,
                       child: Form(
                         key: formKey,
@@ -217,8 +220,10 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                                   TextEditingController(
                                       text: attendanceWorkedHours),
                                   (value) {
-                                    attendanceWorkedHours = (double.parse(attendanceEndTime) -
-                                        double.parse(attendanceStartTime)).toString();
+                                    attendanceWorkedHours = (double.parse(
+                                                attendanceEndTime) -
+                                            double.parse(attendanceStartTime))
+                                        .toString();
                                     attendanceWorkedHours = value;
                                   },
                                   TextConstants.attendanceWorkedHours,
@@ -241,7 +246,8 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                                   SizeConstants.textFieldPaddingBottom),
                               child: FormTextFieldWidget.functionTextFormField(
                                   false,
-                                  TextEditingController(text: attendanceUsername),
+                                  TextEditingController(
+                                      text: attendanceUsername),
                                   (value) {
                                     attendanceUsername = value;
                                   },
@@ -264,13 +270,15 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                                   SizeConstants.textFieldPaddingBottom),
                               child: FormTextFieldWidget.functionTextFormField(
                                   false,
-                                  TextEditingController(text: attendanceCompanyName),
+                                  TextEditingController(
+                                      text: attendanceCompanyName),
                                   (value) {
                                     attendanceCompanyName = value;
                                   },
                                   TextConstants.attendanceCompanyName,
                                   false,
-                                  const Icon(IconConstants.attendanceCompanyName),
+                                  const Icon(
+                                      IconConstants.attendanceCompanyName),
                                   (value) {
                                     if (value!.isEmpty) {
                                       return TextConstants.emptyValueValidation;
@@ -287,13 +295,15 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                                   SizeConstants.textFieldPaddingBottom),
                               child: FormTextFieldWidget.functionTextFormField(
                                   false,
-                                  TextEditingController(text: attendanceCompanyLocation),
+                                  TextEditingController(
+                                      text: attendanceCompanyLocation),
                                   (value) {
                                     attendanceCompanyLocation = value;
                                   },
                                   TextConstants.attendanceCompanyLocation,
                                   false,
-                                  const Icon(IconConstants.attendanceCompanyLocation),
+                                  const Icon(
+                                      IconConstants.attendanceCompanyLocation),
                                   (value) {
                                     if (value!.isEmpty) {
                                       return TextConstants.emptyValueValidation;
@@ -321,16 +331,75 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                                         ColorConstants.buttonShadowColor,
                                   ),
                                   onPressed: () {
-                                    // if (formKey.currentState!.validate()) {
-                                    //   CompanyService().updateAttendanceById(
-                                    //       attendanceId,
-                                    //       attendanceStartTime,
-                                    //       attendanceEndTime,
-                                    //       attendanceWorkedHours,
-                                    //       context);
-                                    // } else {
-                                    //   log(TextConstants.buttonLogError);
-                                    // }
+                                    if (formKey.currentState!.validate()) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                TextConstants.alertTitle,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: SizeConstants
+                                                        .alertTitleFontSize,
+                                                    color: ColorConstants
+                                                        .primaryColor),
+                                              ),
+                                              content: const Text(
+                                                TextConstants
+                                                    .alertUpdateContent,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: SizeConstants
+                                                        .alertContentFontSize,
+                                                    color: ColorConstants
+                                                        .primaryColor),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: const Text(
+                                                    TextConstants
+                                                        .alertButtonCancel,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: SizeConstants
+                                                            .alertButtonFontSize,
+                                                        color: ColorConstants
+                                                            .primaryColor),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: const Text(
+                                                    TextConstants
+                                                        .alertButtonConfirm,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: SizeConstants
+                                                            .alertButtonFontSize,
+                                                        color: ColorConstants
+                                                            .primaryColor),
+                                                  ),
+                                                  onPressed: () {
+                                                    //   CompanyService().updateAttendanceById(
+                                                    //       attendanceId,
+                                                    //       attendanceStartTime,
+                                                    //       attendanceEndTime,
+                                                    //       attendanceWorkedHours,
+                                                    //       context);
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    } else {
+                                      log(TextConstants.buttonLogError);
+                                    }
                                   },
                                   child: const Text(
                                     TextConstants.updateAttendanceButtonText,

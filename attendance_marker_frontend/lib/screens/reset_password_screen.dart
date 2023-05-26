@@ -147,50 +147,59 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             ),
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
-                                if (password == confirmPassword) {
-                                  UserService()
-                                      .resetPassword(password)
-                                      .then((val) async {
-                                    if (val.data['success']) {
-                                      Fluttertoast.showToast(
-                                          msg: TextConstants
-                                              .resetPasswordButtonSuccessToast,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor:
-                                              ColorConstants.toastSuccessColor,
-                                          textColor:
-                                              ColorConstants.toastTextColor,
+                                showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                      TextConstants.alertTitle,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
                                           fontSize:
-                                              SizeConstants.toastFontSize);
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: TextConstants
-                                              .resetPasswordButtonErrorToast,
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.BOTTOM,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor:
-                                              ColorConstants.toastErrorColor,
-                                          textColor:
-                                              ColorConstants.toastTextColor,
-                                          fontSize:
-                                              SizeConstants.toastFontSize);
-                                    }
-                                  });
-                                } else {
-                                  Fluttertoast.showToast(
-                                      msg: TextConstants
-                                          .passwordMisMatchValidation,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor:
-                                          ColorConstants.toastErrorColor,
-                                      textColor: ColorConstants.toastTextColor,
-                                      fontSize: SizeConstants.toastFontSize);
-                                }
+                                              SizeConstants.alertTitleFontSize,
+                                          color: ColorConstants.primaryColor),
+                                    ),
+                                    content: const Text(
+                                      TextConstants.alertResetPassword,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: SizeConstants
+                                              .alertContentFontSize,
+                                          color: ColorConstants.primaryColor),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text(
+                                          TextConstants.alertButtonCancel,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: SizeConstants
+                                                  .alertButtonFontSize,
+                                              color:
+                                                  ColorConstants.primaryColor),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text(
+                                          TextConstants.alertButtonConfirm,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: SizeConstants
+                                                  .alertButtonFontSize,
+                                              color:
+                                                  ColorConstants.primaryColor),
+                                        ),
+                                        onPressed: () {
+                                          UserService().resetPassword(password);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                                
                               } else {
                                 log(TextConstants.buttonLogError);
                               }

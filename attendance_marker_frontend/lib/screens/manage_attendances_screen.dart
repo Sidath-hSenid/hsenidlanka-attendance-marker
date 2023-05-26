@@ -1,12 +1,11 @@
-// import 'package:attendance_marker_frontend/screens/single_attendance_screen.dart';
 import 'package:attendance_marker_frontend/screens/all_attendances_screen.dart';
-import 'package:attendance_marker_frontend/screens/attendances_by_user_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:flutter/material.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/icon_constants.dart';
 import '../utils/constants/text_constants.dart';
 import '../utils/widgets/navigational_drawer_widget.dart';
+import 'attendances_all_users_screen.dart';
 
 class ManageAttendancesScreen extends StatefulWidget {
   const ManageAttendancesScreen({super.key});
@@ -55,7 +54,7 @@ class _ManageAttendancesScreenState extends State<ManageAttendancesScreen> {
         body: const TabBarView(
           children: [
             AllAttendancesScreen(),
-            AttendanceByUserScreen()
+            AttendancesAllUsersScreen()
           ],
         ),
       ),

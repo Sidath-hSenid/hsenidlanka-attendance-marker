@@ -1,11 +1,10 @@
-// import 'package:attendance_marker_frontend/screens/single_attendance_screen.dart';
 import 'package:attendance_marker_frontend/screens/single_attendance_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/company_model.dart';
+import '../services/attendance_service.dart';
 import '../utils/constants/backend_api_constants.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/model_constants.dart';
@@ -16,8 +15,7 @@ class AllAttendancesScreen extends StatefulWidget {
   const AllAttendancesScreen({super.key});
 
   @override
-  State<AllAttendancesScreen> createState() =>
-      _AllAttendancesScreenState();
+  State<AllAttendancesScreen> createState() => _AllAttendancesScreenState();
 }
 
 class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
@@ -33,7 +31,6 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
 
   // ---------------------------------------------- Get All Attendances Function Start ----------------------------------------------
 
-  CompanyModel? companyDataFromAPI;
   getAllAttendances() async {
     Dio dio = Dio();
     Response response;
@@ -58,8 +55,8 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
         });
         isLoading = false;
       } else {
-        ToastWidget.functionToastWidget(
-            TextConstants.allAttendanceErrorToast, ColorConstants.toastErrorColor);
+        ToastWidget.functionToastWidget(TextConstants.allAttendanceErrorToast,
+            ColorConstants.toastErrorColor);
         setState(() {
           attendances = [];
         });
@@ -70,6 +67,8 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
           e.toString(), ColorConstants.toastWarningColor);
     }
   }
+
+  // ---------------------------------------------- Get All Attendances Function End ----------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -84,28 +83,88 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () async {
-                    var attendanceId = attendances[index][ModelConstants.attendanceId];
+                    var attendanceId =
+                        attendances[index][ModelConstants.attendanceId];
                     var date = attendances[index][ModelConstants.date];
-                    var startTime = attendances[index][ModelConstants.startTime];
+                    var startTime =
+                        attendances[index][ModelConstants.startTime];
                     var endTime = attendances[index][ModelConstants.endTime];
-                    var workedHours = attendances[index][ModelConstants.workedHours];
-                    var username = attendances[index][ModelConstants.user][ModelConstants.username];
-                    var companyName = attendances[index][ModelConstants.user][ModelConstants.company][ModelConstants.companyName];
-                    var companyLocation = attendances[index][ModelConstants.user][ModelConstants.company][ModelConstants.companyLocation];
+                    var workedHours =
+                        attendances[index][ModelConstants.workedHours];
+                    var username = attendances[index][ModelConstants.user]
+                        [ModelConstants.username];
+                    var companyName = attendances[index][ModelConstants.user]
+                        [ModelConstants.company][ModelConstants.companyName];
+                    var companyLocation = attendances[index]
+                            [ModelConstants.user][ModelConstants.company]
+                        [ModelConstants.companyLocation];
 
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => SingleAttendanceScreen(
-                                attId: attendanceId,
-                                attDate: date,
-                                attStartTime: startTime,
-                                attEndTime: endTime,
-                                attWorkedHours: (workedHours).toString(),
-                                attUsername: username,
-                                attCompanyName: companyName,
-                                attCompanyLocation: companyLocation,
+                                  attId: attendanceId,
+                                  attDate: date,
+                                  attStartTime: startTime,
+                                  attEndTime: endTime.toString(),
+                                  attWorkedHours: (workedHours).toString(),
+                                  attUsername: username,
+                                  attCompanyName: companyName,
+                                  attCompanyLocation: companyLocation,
                                 )));
+                  },
+                  onLongPress: () {
+                    var attendanceId =
+                        attendances[index][ModelConstants.attendanceId];
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text(
+                              TextConstants.alertTitle,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: SizeConstants.alertTitleFontSize,
+                                  color: ColorConstants.primaryColor),
+                            ),
+                            content: const Text(
+                              TextConstants.alertDeleteContent,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: SizeConstants.alertContentFontSize,
+                                  color: ColorConstants.primaryColor),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text(
+                                  TextConstants.alertButtonCancel,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          SizeConstants.alertButtonFontSize,
+                                      color: ColorConstants.primaryColor),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text(
+                                  TextConstants.alertButtonConfirm,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          SizeConstants.alertButtonFontSize,
+                                      color: ColorConstants.primaryColor),
+                                ),
+                                onPressed: () {
+                                  AttendanceService().deleteAttendanceById(
+                                      attendanceId, context);
+                                },
+                              ),
+                            ],
+                          );
+                        });
                   },
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(
@@ -126,13 +185,13 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                             padding: const EdgeInsets.all(
                                 SizeConstants.cardPaddingAll),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Image.asset(
                                   TextConstants.attendancesImageLink,
                                   height: SizeConstants.cardImageHeight,
                                   width: SizeConstants.cardImageWidth,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                 ),
                                 Container(
                                     width: SizeConstants.cardContainerWidth),
@@ -150,8 +209,8 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                                             .toString()),
                                         maxLines: 2,
                                         style: TextStyle(
-                                          color: ColorConstants
-                                              .cardValueTextColor,
+                                          color:
+                                              ColorConstants.cardValueTextColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: SizeConstants
                                               .cardAttributeTextFontSize,
@@ -162,7 +221,8 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                                               .cardContainerMinHeight),
                                       Text(
                                         (attendances[index][ModelConstants.user]
-                                                [ModelConstants.company][ModelConstants.companyName]
+                                                    [ModelConstants.company]
+                                                [ModelConstants.companyName]
                                             .toString()),
                                         maxLines: 3,
                                         style: TextStyle(
@@ -197,8 +257,8 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                                             .toString()),
                                         maxLines: 1,
                                         style: TextStyle(
-                                          color: ColorConstants
-                                              .cardValueTextColor,
+                                          color:
+                                              ColorConstants.cardValueTextColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: SizeConstants
                                               .cardAttributeTextFontSize,
@@ -209,8 +269,12 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                                               .cardContainerMinHeight),
                                       Text(
                                         (attendances[index]
-                                                [ModelConstants.endTime]
-                                            .toString()),
+                                                    [ModelConstants.endTime]) !=
+                                                null
+                                            ? (attendances[index]
+                                                    [ModelConstants.endTime]
+                                                .toString())
+                                            : TextConstants.notYetRecordedText,
                                         maxLines: 1,
                                         style: TextStyle(
                                           color:

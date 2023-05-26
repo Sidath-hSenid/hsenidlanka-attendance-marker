@@ -1,6 +1,7 @@
 import 'package:attendance_marker_frontend/screens/add_user_screen.dart';
 import 'package:attendance_marker_frontend/screens/all_users_screen.dart';
 import 'package:attendance_marker_frontend/screens/attendances_by_user_screen.dart';
+import 'package:attendance_marker_frontend/screens/users_all_companies_screen.dart';
 import 'package:attendance_marker_frontend/screens/users_by_company_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/icon_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/text_constants.dart';
@@ -60,7 +61,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           children: [
             AllUsersScreen(),
             AddUserScreen(),
-            UsersByCompanyScreen(),
+            UsersAllCompaniesScreen(),
           ],
         ),
       ),

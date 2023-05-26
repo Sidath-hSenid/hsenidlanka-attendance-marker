@@ -6,7 +6,6 @@ import 'package:textfield_search/textfield_search.dart';
 class TextFieldSearchWidget {
   static functionTextFieldSearch(
       var labelValue, var controllerValue, var futureFunctionValue, getSelectedValues) {
-    // print(futureFunctionValue);
     return TextFieldSearch(
       label: labelValue,
       controller: controllerValue,

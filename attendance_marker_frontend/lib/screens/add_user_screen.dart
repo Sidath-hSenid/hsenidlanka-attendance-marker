@@ -7,7 +7,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/company_model.dart';
 import '../services/user_service.dart';
 import '../utils/constants/backend_api_constants.dart';
 import '../utils/constants/color_constants.dart';
@@ -17,7 +16,6 @@ import '../utils/constants/size_constants.dart';
 import '../utils/constants/text_constants.dart';
 import '../utils/widgets/form_text_field_widget.dart';
 import '../utils/widgets/toast_widget.dart';
-import '../utils/widgets/user_app_bar_widget.dart';
 
 class AddUserScreen extends StatefulWidget {
   const AddUserScreen({super.key});
@@ -46,8 +44,6 @@ class _AddUserScreenState extends State<AddUserScreen> {
   }
 
   // ---------------------------------------------- Get All Companies Function Start ----------------------------------------------
-
-  CompanyModel? companyDataFromAPI;
 
   getAllCompanies() async {
     Dio dio = Dio();
@@ -255,8 +251,59 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         ),
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            UserService().addUser(
-                                username, email, password, company, context);
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                      TextConstants.alertTitle,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize:
+                                              SizeConstants.alertTitleFontSize,
+                                          color: ColorConstants.primaryColor),
+                                    ),
+                                    content: const Text(
+                                      TextConstants.alertAddContent,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: SizeConstants
+                                              .alertContentFontSize,
+                                          color: ColorConstants.primaryColor),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text(
+                                          TextConstants.alertButtonCancel,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: SizeConstants
+                                                  .alertButtonFontSize,
+                                              color:
+                                                  ColorConstants.primaryColor),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text(
+                                          TextConstants.alertButtonConfirm,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: SizeConstants
+                                                  .alertButtonFontSize,
+                                              color:
+                                                  ColorConstants.primaryColor),
+                                        ),
+                                        onPressed: () {
+                                          UserService().addUser(username, email,
+                                              password, company, context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           } else {
                             log(TextConstants.buttonLogError);
                           }

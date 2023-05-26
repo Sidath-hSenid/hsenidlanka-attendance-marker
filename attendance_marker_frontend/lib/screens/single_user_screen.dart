@@ -17,7 +17,7 @@ import '../utils/widgets/toast_widget.dart';
 import '../utils/widgets/user_app_bar_widget.dart';
 
 class SingleUserScreen extends StatefulWidget {
-  final useId, usename, useEmail,useCompany;
+  final useId, usename, useEmail, useCompany;
   const SingleUserScreen(
       {Key? key,
       required this.useId,
@@ -42,7 +42,6 @@ class _SingleUserScreenState extends State<SingleUserScreen> {
     super.initState();
     getAllCompanies();
     setState(() {
-      print(widget.useCompany);
       userId = widget.useId;
       username = widget.usename;
       email = widget.useEmail;
@@ -266,12 +265,72 @@ class _SingleUserScreenState extends State<SingleUserScreen> {
                                   ),
                                   onPressed: () {
                                     if (formKey.currentState!.validate()) {
-                                      UserService().updateUserById(
-                                          userId,
-                                          username,
-                                          email,
-                                          company,
-                                          context);
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                TextConstants.alertTitle,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: SizeConstants
+                                                        .alertTitleFontSize,
+                                                    color: ColorConstants
+                                                        .primaryColor),
+                                              ),
+                                              content: const Text(
+                                                TextConstants
+                                                    .alertUpdateContent,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: SizeConstants
+                                                        .alertContentFontSize,
+                                                    color: ColorConstants
+                                                        .primaryColor),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: const Text(
+                                                    TextConstants
+                                                        .alertButtonCancel,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: SizeConstants
+                                                            .alertButtonFontSize,
+                                                        color: ColorConstants
+                                                            .primaryColor),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: const Text(
+                                                    TextConstants
+                                                        .alertButtonConfirm,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: SizeConstants
+                                                            .alertButtonFontSize,
+                                                        color: ColorConstants
+                                                            .primaryColor),
+                                                  ),
+                                                  onPressed: () {
+                                                    UserService()
+                                                        .updateUserById(
+                                                            userId,
+                                                            username,
+                                                            email,
+                                                            company,
+                                                            context);
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          });
                                     } else {
                                       log(TextConstants.buttonLogError);
                                     }

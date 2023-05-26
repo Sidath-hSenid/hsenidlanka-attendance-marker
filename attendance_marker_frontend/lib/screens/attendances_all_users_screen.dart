@@ -1,5 +1,4 @@
-import 'package:attendance_marker_frontend/screens/single_user_screen.dart';
-import 'package:attendance_marker_frontend/services/user_service.dart';
+import 'package:attendance_marker_frontend/screens/attendances_by_user_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,14 +11,15 @@ import '../utils/constants/text_constants.dart';
 import '../utils/widgets/navigational_drawer_widget.dart';
 import '../utils/widgets/toast_widget.dart';
 
-class AllUsersScreen extends StatefulWidget {
-  const AllUsersScreen({super.key});
+class AttendancesAllUsersScreen extends StatefulWidget {
+  const AttendancesAllUsersScreen({super.key});
 
   @override
-  State<AllUsersScreen> createState() => _AllUsersScreenState();
+  State<AttendancesAllUsersScreen> createState() =>
+      _AttendancesAllUsersScreenState();
 }
 
-class _AllUsersScreenState extends State<AllUsersScreen> {
+class _AttendancesAllUsersScreenState extends State<AttendancesAllUsersScreen> {
   bool isLoading = true;
   List users = [];
   var formKey = GlobalKey<FormState>();
@@ -68,7 +68,7 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
           e.toString(), ColorConstants.toastWarningColor);
     }
   }
-
+  
   // ---------------------------------------------- Get All Users Function End ----------------------------------------------
 
   @override
@@ -86,69 +86,12 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
                 return GestureDetector(
                   onTap: () async {
                     var userId = users[index][ModelConstants.userId];
-                    var username = users[index][ModelConstants.username];
-                    var email = users[index][ModelConstants.email];
-                    var company = users[index][ModelConstants.company];
 
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SingleUserScreen(
-                                useId: userId,
-                                usename: username,
-                                useEmail: email,
-                                useCompany: company)));
-                  },
-                  onLongPress: () {
-                    var userId = users[index][ModelConstants.userId];
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text(
-                              TextConstants.alertTitle,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: SizeConstants.alertTitleFontSize,
-                                  color: ColorConstants.primaryColor),
-                            ),
-                            content: const Text(
-                              TextConstants.alertDeleteContent,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: SizeConstants.alertContentFontSize,
-                                  color: ColorConstants.primaryColor),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: const Text(
-                                  TextConstants.alertButtonCancel,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          SizeConstants.alertButtonFontSize,
-                                      color: ColorConstants.primaryColor),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: const Text(
-                                  TextConstants.alertButtonConfirm,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          SizeConstants.alertButtonFontSize,
-                                      color: ColorConstants.primaryColor),
-                                ),
-                                onPressed: () {
-                                  UserService().deleteUserById(userId, context);
-                                },
-                              ),
-                            ],
-                          );
-                        });
+                            builder: (context) =>
+                                AttendanceByUserScreen(useId: userId)));
                   },
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(
@@ -228,7 +171,7 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
                                       ),
                                       Container(
                                           height: SizeConstants
-                                              .cardContainerMinHeight),
+                                              .cardContainerMaxHeight),
                                       Text(
                                         (users[index][ModelConstants.company]
                                                 [ModelConstants.companyName]

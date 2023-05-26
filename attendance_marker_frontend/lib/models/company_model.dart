@@ -1,5 +1,3 @@
-import 'package:flutter/src/material/dropdown.dart';
-
 import '../utils/constants/model_constants.dart';
 
 class CompanyModel {
@@ -24,6 +22,4 @@ class CompanyModel {
     company[ModelConstants.companyLocation] = companyLocation;
     return company;
   }
-
-  // map(DropdownMenuItem<CompanyModel> Function(dynamic company) param0) {}
 }

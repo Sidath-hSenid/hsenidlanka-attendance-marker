@@ -10,9 +10,12 @@ import '../utils/widgets/form_text_field_widget.dart';
 import '../utils/widgets/user_app_bar_widget.dart';
 
 class SingleCompanyScreen extends StatefulWidget {
-
   final String comId, comName, comLocation;
-  const SingleCompanyScreen({Key? key, required this.comId,required this.comName, required this.comLocation})
+  const SingleCompanyScreen(
+      {Key? key,
+      required this.comId,
+      required this.comName,
+      required this.comLocation})
       : super(key: key);
 
   @override
@@ -26,7 +29,7 @@ class _SingleCompanyScreenState extends State<SingleCompanyScreen> {
   var companyId = "", companyName = "", companyLocation = "";
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     setState(() {
       companyId = widget.comId;
@@ -37,14 +40,16 @@ class _SingleCompanyScreenState extends State<SingleCompanyScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     var size = MediaQuery.of(context).size;
     var screenWidth = size.width;
     var screenHeight = size.height;
 
     return Scaffold(
-        appBar: UserAppBarWidget.functionAppBarInsideBackButtonWithDeleteCompany(
-            TextConstants.detailsCompanyAppBarTitleText, companyId, context),
+        appBar:
+            UserAppBarWidget.functionAppBarInsideBackButtonWithDeleteCompany(
+                TextConstants.detailsCompanyAppBarTitleText,
+                companyId,
+                context),
         body: isLoading
             ? const Center(
                 child: CircularProgressIndicator(),
@@ -86,8 +91,7 @@ class _SingleCompanyScreenState extends State<SingleCompanyScreen> {
                                   SizeConstants.textFieldPaddingBottom),
                               child: FormTextFieldWidget.functionTextFormField(
                                   false,
-                                  TextEditingController(
-                                      text: companyId),
+                                  TextEditingController(text: companyId),
                                   (value) {
                                     companyId = value;
                                   },
@@ -110,8 +114,7 @@ class _SingleCompanyScreenState extends State<SingleCompanyScreen> {
                                   SizeConstants.textFieldPaddingBottom),
                               child: FormTextFieldWidget.functionTextFormField(
                                   true,
-                                  TextEditingController(
-                                      text: companyName),
+                                  TextEditingController(text: companyName),
                                   (value) {
                                     companyName = value;
                                   },
@@ -134,8 +137,7 @@ class _SingleCompanyScreenState extends State<SingleCompanyScreen> {
                                   SizeConstants.textFieldPaddingBottom),
                               child: FormTextFieldWidget.functionTextFormField(
                                   true,
-                                  TextEditingController(
-                                      text: companyLocation),
+                                  TextEditingController(text: companyLocation),
                                   (value) {
                                     companyLocation = value;
                                   },
@@ -170,8 +172,71 @@ class _SingleCompanyScreenState extends State<SingleCompanyScreen> {
                                   ),
                                   onPressed: () {
                                     if (formKey.currentState!.validate()) {
-                                      CompanyService().updateCompanyById(companyId,companyName,
-                                          companyLocation, context);
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                TextConstants.alertTitle,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: SizeConstants
+                                                        .alertTitleFontSize,
+                                                    color: ColorConstants
+                                                        .primaryColor),
+                                              ),
+                                              content: const Text(
+                                                TextConstants
+                                                    .alertUpdateContent,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: SizeConstants
+                                                        .alertContentFontSize,
+                                                    color: ColorConstants
+                                                        .primaryColor),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: const Text(
+                                                    TextConstants
+                                                        .alertButtonCancel,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: SizeConstants
+                                                            .alertButtonFontSize,
+                                                        color: ColorConstants
+                                                            .primaryColor),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: const Text(
+                                                    TextConstants
+                                                        .alertButtonConfirm,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: SizeConstants
+                                                            .alertButtonFontSize,
+                                                        color: ColorConstants
+                                                            .primaryColor),
+                                                  ),
+                                                  onPressed: () {
+                                                    CompanyService()
+                                                        .updateCompanyById(
+                                                            companyId,
+                                                            companyName,
+                                                            companyLocation,
+                                                            context);
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          });
                                     } else {
                                       log(TextConstants.buttonLogError);
                                     }

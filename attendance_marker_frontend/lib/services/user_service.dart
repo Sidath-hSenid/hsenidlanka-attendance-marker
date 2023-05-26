@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
-import 'package:attendance_marker_frontend/screens/add_start_time_screen.dart';
-import 'package:attendance_marker_frontend/screens/all_companies_screen.dart';
+import 'package:attendance_marker_frontend/screens/admin_home_screen.dart';
+import 'package:attendance_marker_frontend/screens/manage_users_screen.dart';
 import 'package:attendance_marker_frontend/screens/reset_password_screen.dart';
 import 'package:attendance_marker_frontend/screens/user_home_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/backend_api_constants.dart';
@@ -12,14 +12,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../screens/all_users_screen.dart';
 import '../screens/single_user_screen.dart';
 import '../utils/widgets/toast_widget.dart';
 
 class UserService {
+
   Dio dio = Dio();
 
   // ---------------------------------------------- Login Function Start ----------------------------------------------
+  
   login(username, password, context) async {
     Response response;
     try {
@@ -36,9 +37,10 @@ class UserService {
         var accessToken = response.data[ModelConstants.token];
         var userId = response.data[ModelConstants.userId];
         prefs.setString(ModelConstants.token, accessToken);
-        prefs.setString(ModelConstants.userId, userId);
+        prefs.setString(ModelConstants.sharedUserId, userId);
 
-        if (response.data[ModelConstants.userRoles].toString() == ModelConstants.authRole.toString()) {
+        if (response.data[ModelConstants.userRoles].toString() ==
+            ModelConstants.authRole.toString()) {
           Response res;
           res = await dio.get(
               BackendAPIConstants.rootAPI +
@@ -53,12 +55,15 @@ class UserService {
             var userId = res.data[ModelConstants.userId].toString();
             var username = res.data[ModelConstants.username].toString();
             var email = res.data[ModelConstants.email].toString();
-             var companyId = res.data[ModelConstants.company]
-                [ModelConstants.companyId].toString();
+            var companyId = res.data[ModelConstants.company]
+                    [ModelConstants.companyId]
+                .toString();
             var companyName = res.data[ModelConstants.company]
-                [ModelConstants.companyName].toString();
+                    [ModelConstants.companyName]
+                .toString();
             var companyLocation = res.data[ModelConstants.company]
-                [ModelConstants.companyLocation].toString();
+                    [ModelConstants.companyLocation]
+                .toString();
 
             prefs.setString(ModelConstants.sharedUserId, userId);
             prefs.setString(ModelConstants.username, username);
@@ -78,7 +83,7 @@ class UserService {
           }
         } else {
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const AllUsersScreen()));
+              MaterialPageRoute(builder: (context) => const AdminHomeScreen()));
 
           ToastWidget.functionToastWidget(
               TextConstants.signInButtonSuccessToast,
@@ -93,6 +98,10 @@ class UserService {
           e.toString(), ColorConstants.toastWarningColor);
     }
   }
+
+  // ---------------------------------------------- Login Function End ----------------------------------------------
+
+  // ---------------------------------------------- Add User Function Start ----------------------------------------------
 
   addUser(username, email, password, company, context) async {
     Response response;
@@ -114,7 +123,7 @@ class UserService {
           ));
       if (response.statusCode == 200) {
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const AllUsersScreen()));
+            MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
 
         ToastWidget.functionToastWidget(TextConstants.signUpButtonSuccessToast,
             ColorConstants.toastSuccessColor);
@@ -132,7 +141,10 @@ class UserService {
     }
   }
 
+  // ---------------------------------------------- Add User Function End ----------------------------------------------
+
   // ---------------------------------------------- Forgot Password Function Start ----------------------------------------------
+  
   forgotPassword(email) async {
     try {
       await dio.post(
@@ -149,7 +161,10 @@ class UserService {
     }
   }
 
+  // ---------------------------------------------- Forgot Password Function End ----------------------------------------------
+
   // ---------------------------------------------- Validate OTP Function Start ----------------------------------------------
+  
   validateOTP(otp) async {
     try {
       await dio.post(
@@ -166,7 +181,10 @@ class UserService {
     }
   }
 
+  // ---------------------------------------------- Validate OTP Function End ----------------------------------------------
+
   // ---------------------------------------------- Reset Password Function Start ----------------------------------------------
+  
   resetPassword(password) async {
     try {
       await dio.post(
@@ -183,7 +201,10 @@ class UserService {
     }
   }
 
+  // ---------------------------------------------- Reset Password Function End ----------------------------------------------
+
   // ---------------------------------------------- Update User By Id Function Start ----------------------------------------------
+  
   updateUserById(userId, username, email, company, context) async {
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -207,7 +228,7 @@ class UserService {
 
       if (response.statusCode == 200) {
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const AllUsersScreen()));
+            MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
 
         ToastWidget.functionToastWidget(TextConstants.updateUserSuccessToast,
             ColorConstants.toastSuccessColor);
@@ -230,7 +251,10 @@ class UserService {
     }
   }
 
+  // ---------------------------------------------- Update User By Id Function End ----------------------------------------------
+
   // ---------------------------------------------- Delete User By Id Function Start ----------------------------------------------
+  
   deleteUserById(userId, context) async {
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -246,9 +270,9 @@ class UserService {
         ),
       );
 
-      if (response.statusCode == 200) {
+      if (response.data[ModelConstants.statCode] != 400) {
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const AllUsersScreen()));
+            MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
 
         ToastWidget.functionToastWidget(TextConstants.deleteUserSuccessToast,
             ColorConstants.toastSuccessColor);
@@ -257,11 +281,13 @@ class UserService {
             TextConstants.deleteUserErrorToast, ColorConstants.toastErrorColor);
 
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const AllUsersScreen()));
+            MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
       }
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
           e.toString(), ColorConstants.toastWarningColor);
     }
   }
+
+  // ---------------------------------------------- Delete User By Id Function End ----------------------------------------------
 }

@@ -34,10 +34,6 @@ class SizeConstants {
   static const double titleTextPaddingBottom = 40.0;
 
   // Screens
-  // static var signInScreenTopWidth = window.physicalSize.width;
-  // static var signInScreenTopHeight = window.physicalSize.height/8;
-  // static var signInScreenBottomWidth = window.physicalSize.width;
-  // static var signInScreenBottomHeight = (window.physicalSize.height/8);
   static const double signInScreenTopLeftRadius = 75;
   static const double screenHeightDivideBy = 3;
   static const double screenHeightTop = 2;
@@ -50,6 +46,7 @@ class SizeConstants {
   static const double signIgnImagePaddingTop = 0.0;
   static const double signIgnImagePaddingBottom = 30.0;
   static const double fingerPrintDivideBy = 2;
+  static const double adminHomeDivideBy = 3;
   static const double fingerPrintMarginTop = 40;
 
   // Icon Size
@@ -80,10 +77,18 @@ class SizeConstants {
   static const double userCardBorderRadius = 10.0;
   static const double userCardAttributeTextFontSize = 22.0;
   static const double userCardValueTextFontSize = 18.0;
+  static const double cardTitleFontSize = 20.0;
+  static const double cardSubTitleFontSize = 15.0;
+  static const double adminCardBorderRadius = 10.0;
 
   // Search Text Field
   static const double searchTextFieldThickness = 20.0;
 
   // Info Text
   static const double infoTextFontSize = 16;
+
+  // Alert Text
+  static const double alertButtonFontSize = 18.0;
+  static const double alertTitleFontSize = 22.0;
+  static const double alertContentFontSize = 15.0;
 }
