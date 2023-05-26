@@ -1,8 +1,8 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BackendAPIConstants {
-  static String rootAPI = dotenv.env['BACKEND_API'].toString();
-  // static String rootAPI = dotenv.env['BACKEND_IP_ADDRESS_API'].toString();
+  // static String rootAPI = dotenv.env['BACKEND_API'].toString();
+  static String rootAPI = dotenv.env['BACKEND_IP_ADDRESS_API'].toString();
 
   // User API
   static const String loginAPI = '/auth/login';

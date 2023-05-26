@@ -45,54 +45,55 @@ class _AddStartTimeScreenState extends State<AddStartTimeScreen> {
                 color: ColorConstants.enabledColor,
                 child: GestureDetector(
                   onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text(
-                              TextConstants.alertTitle,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: SizeConstants.alertTitleFontSize,
-                                  color: ColorConstants.primaryColor),
-                            ),
-                            content: const Text(
-                              TextConstants.alertAddStartTime,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: SizeConstants.alertContentFontSize,
-                                  color: ColorConstants.primaryColor),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: const Text(
-                                  TextConstants.alertButtonCancel,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          SizeConstants.alertButtonFontSize,
-                                      color: ColorConstants.primaryColor),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: const Text(
-                                  TextConstants.alertButtonConfirm,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          SizeConstants.alertButtonFontSize,
-                                      color: ColorConstants.primaryColor),
-                                ),
-                                onPressed: () {
-                                  AttendanceService().addAttendance(context);
-                                },
-                              ),
-                            ],
-                          );
-                        });
+                    AttendanceService().addAttendance(context);
+                    // showDialog(
+                    //     context: context,
+                    //     builder: (BuildContext context) {
+                    //       return AlertDialog(
+                    //         title: const Text(
+                    //           TextConstants.alertTitle,
+                    //           style: TextStyle(
+                    //               fontWeight: FontWeight.bold,
+                    //               fontSize: SizeConstants.alertTitleFontSize,
+                    //               color: ColorConstants.primaryColor),
+                    //         ),
+                    //         content: const Text(
+                    //           TextConstants.alertAddStartTime,
+                    //           style: TextStyle(
+                    //               fontWeight: FontWeight.normal,
+                    //               fontSize: SizeConstants.alertContentFontSize,
+                    //               color: ColorConstants.primaryColor),
+                    //         ),
+                    //         actions: [
+                    //           TextButton(
+                    //             child: const Text(
+                    //               TextConstants.alertButtonCancel,
+                    //               style: TextStyle(
+                    //                   fontWeight: FontWeight.bold,
+                    //                   fontSize:
+                    //                       SizeConstants.alertButtonFontSize,
+                    //                   color: ColorConstants.primaryColor),
+                    //             ),
+                    //             onPressed: () {
+                    //               Navigator.of(context).pop();
+                    //             },
+                    //           ),
+                    //           TextButton(
+                    //             child: const Text(
+                    //               TextConstants.alertButtonConfirm,
+                    //               style: TextStyle(
+                    //                   fontWeight: FontWeight.bold,
+                    //                   fontSize:
+                    //                       SizeConstants.alertButtonFontSize,
+                    //                   color: ColorConstants.primaryColor),
+                    //             ),
+                    //             onPressed: () {
+                    //               AttendanceService().addAttendance(context);
+                    //             },
+                    //           ),
+                    //         ],
+                    //       );
+                    //     });
                   },
                   child: SizedBox(
                     child: Image.asset(

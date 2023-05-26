@@ -10,10 +10,8 @@ import '../constants/size_constants.dart';
 import '../constants/text_constants.dart';
 
 class NavigationalDrawerWidget {
-
-  static functionUserNavigationalDrawer(username,email, companyName, companyLocation, context) {
-
-    
+  static functionUserNavigationalDrawer(
+      username, email, companyName, companyLocation, context) {
     Size size = MediaQuery.of(context).size;
     var drawerHeight = size.height;
     var drawerWidth = size.width;

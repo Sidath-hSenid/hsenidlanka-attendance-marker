@@ -89,8 +89,6 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                     var startTime =
                         attendances[index][ModelConstants.startTime];
                     var endTime = attendances[index][ModelConstants.endTime];
-                    var workedHours =
-                        attendances[index][ModelConstants.workedHours];
                     var username = attendances[index][ModelConstants.user]
                         [ModelConstants.username];
                     var companyName = attendances[index][ModelConstants.user]
@@ -107,7 +105,6 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                                   attDate: date,
                                   attStartTime: startTime,
                                   attEndTime: endTime.toString(),
-                                  attWorkedHours: (workedHours).toString(),
                                   attUsername: username,
                                   attCompanyName: companyName,
                                   attCompanyLocation: companyLocation,
@@ -275,6 +272,26 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                                                     [ModelConstants.endTime]
                                                 .toString())
                                             : TextConstants.notYetRecordedText,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          color:
+                                              ColorConstants.cardValueTextColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: SizeConstants
+                                              .cardAttributeTextFontSize,
+                                        ),
+                                      ),
+                                      Container(
+                                          height: SizeConstants
+                                              .cardContainerMinHeight),
+                                      Text(
+                                        (attendances[index]
+                                                    [ModelConstants.workedHours]) !=
+                                                null
+                                            ? (attendances[index]
+                                                    [ModelConstants.workedHours]
+                                                .toString())
+                                            : TextConstants.notYetCalculatedText,
                                         maxLines: 1,
                                         style: TextStyle(
                                           color:

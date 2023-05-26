@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:attendance_marker_frontend/services/attendance_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/icon_constants.dart';
@@ -14,7 +16,6 @@ class SingleAttendanceScreen extends StatefulWidget {
       attDate,
       attStartTime,
       attEndTime,
-      attWorkedHours,
       attUsername,
       attCompanyName,
       attCompanyLocation;
@@ -24,7 +25,6 @@ class SingleAttendanceScreen extends StatefulWidget {
       required this.attDate,
       required this.attStartTime,
       required this.attEndTime,
-      required this.attWorkedHours,
       required this.attUsername,
       required this.attCompanyName,
       required this.attCompanyLocation})
@@ -42,7 +42,6 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
       attendanceDate = "",
       attendanceStartTime = "",
       attendanceEndTime = "",
-      attendanceWorkedHours = "",
       attendanceUsername = "",
       attendanceCompanyName = "",
       attendanceCompanyLocation = "";
@@ -55,7 +54,6 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
       attendanceDate = widget.attDate;
       attendanceStartTime = widget.attStartTime;
       attendanceEndTime = widget.attEndTime;
-      attendanceWorkedHours = widget.attWorkedHours;
       attendanceUsername = widget.attUsername;
       attendanceCompanyName = widget.attCompanyName;
       attendanceCompanyLocation = widget.attCompanyLocation;
@@ -172,10 +170,6 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                                   (value) {
                                     if (value!.isEmpty) {
                                       return TextConstants.emptyValueValidation;
-                                    } else if (double.parse(
-                                            attendanceEndTime) <=
-                                        double.parse(attendanceStartTime)) {
-                                      return TextConstants.startTimeValidation;
                                     } else {
                                       return null;
                                     }
@@ -197,39 +191,6 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                                   TextConstants.attendanceEndTime,
                                   false,
                                   const Icon(IconConstants.attendanceEndTime),
-                                  (value) {
-                                    if (value!.isEmpty) {
-                                      return TextConstants.emptyValueValidation;
-                                    } else if (double.parse(
-                                            attendanceEndTime) <=
-                                        double.parse(attendanceStartTime)) {
-                                      return TextConstants.endTimeValidation;
-                                    } else {
-                                      return null;
-                                    }
-                                  }),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  SizeConstants.textFieldPaddingHorizontal,
-                                  SizeConstants.textFieldPaddingTop,
-                                  SizeConstants.textFieldPaddingHorizontal,
-                                  SizeConstants.textFieldPaddingBottom),
-                              child: FormTextFieldWidget.functionTextFormField(
-                                  false,
-                                  TextEditingController(
-                                      text: attendanceWorkedHours),
-                                  (value) {
-                                    attendanceWorkedHours = (double.parse(
-                                                attendanceEndTime) -
-                                            double.parse(attendanceStartTime))
-                                        .toString();
-                                    attendanceWorkedHours = value;
-                                  },
-                                  TextConstants.attendanceWorkedHours,
-                                  false,
-                                  const Icon(
-                                      IconConstants.attendanceWorkedHours),
                                   (value) {
                                     if (value!.isEmpty) {
                                       return TextConstants.emptyValueValidation;
@@ -332,71 +293,11 @@ class _SingleAttendanceScreenState extends State<SingleAttendanceScreen> {
                                   ),
                                   onPressed: () {
                                     if (formKey.currentState!.validate()) {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text(
-                                                TextConstants.alertTitle,
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: SizeConstants
-                                                        .alertTitleFontSize,
-                                                    color: ColorConstants
-                                                        .primaryColor),
-                                              ),
-                                              content: const Text(
-                                                TextConstants
-                                                    .alertUpdateContent,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontSize: SizeConstants
-                                                        .alertContentFontSize,
-                                                    color: ColorConstants
-                                                        .primaryColor),
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  child: const Text(
-                                                    TextConstants
-                                                        .alertButtonCancel,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: SizeConstants
-                                                            .alertButtonFontSize,
-                                                        color: ColorConstants
-                                                            .primaryColor),
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: const Text(
-                                                    TextConstants
-                                                        .alertButtonConfirm,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: SizeConstants
-                                                            .alertButtonFontSize,
-                                                        color: ColorConstants
-                                                            .primaryColor),
-                                                  ),
-                                                  onPressed: () {
-                                                    //   CompanyService().updateAttendanceById(
-                                                    //       attendanceId,
-                                                    //       attendanceStartTime,
-                                                    //       attendanceEndTime,
-                                                    //       attendanceWorkedHours,
-                                                    //       context);
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          });
+                                      AttendanceService().updateAttendanceById(
+                                          attendanceId,
+                                          attendanceStartTime,
+                                          attendanceEndTime,
+                                          context);
                                     } else {
                                       log(TextConstants.buttonLogError);
                                     }

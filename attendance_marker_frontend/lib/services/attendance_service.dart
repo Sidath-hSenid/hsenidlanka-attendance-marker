@@ -1,3 +1,7 @@
+// ignore_for_file: avoid_print
+
+import 'dart:developer';
+
 import 'package:attendance_marker_frontend/screens/manage_attendances_screen.dart';
 import 'package:attendance_marker_frontend/screens/single_attendance_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/backend_api_constants.dart';
@@ -7,6 +11,7 @@ import 'package:attendance_marker_frontend/utils/constants/text_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:geocoding/geocoding.dart';
@@ -45,10 +50,12 @@ class AttendanceService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var accessToken = prefs.getString(ModelConstants.token);
     try {
+      log("AttendanceService - addAttendance()");
       DateTime today = DateTime.now();
       String date = "${today.year}-${today.month}-${today.day}";
       String startTime = "${today.hour}:${today.minute}";
       String location = await getCurrentLocationPlusCode();
+      log("Location, Date and Time. $date, $startTime And $location");
 
       String userId = prefs.getString(ModelConstants.sharedUserId).toString();
       String username = prefs.getString(ModelConstants.username).toString();
@@ -60,6 +67,7 @@ class AttendanceService {
       String companyLocation =
           prefs.getString(ModelConstants.companyLocation).toString();
       if (location == companyLocation) {
+        log("AttendanceService - addAttendance(Locations are equal)");
         Response res;
         res = await dio.get(
           BackendAPIConstants.rootAPI +
@@ -73,7 +81,11 @@ class AttendanceService {
           ),
         );
         if (res.statusCode == 200) {
+          log(
+              "AttendanceService - addAttendance(Status code equals to 200)");
           if (res.data[ModelConstants.attendanceId] == null) {
+            log(
+                "AttendanceService - addAttendance(No attendance available with the user ID and Date)");
             Response response;
             response = await dio.post(
               BackendAPIConstants.rootAPI +
@@ -103,15 +115,12 @@ class AttendanceService {
             );
 
             if (response.statusCode == 201) {
+              log(
+                  "AttendanceService - addAttendance(New attendance added to the user ID(${res.data[ModelConstants.attendanceId]}) for date($date))");
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const UserHomeScreen()));
-              var sharedAttendanceId =
-                  response.data[ModelConstants.attendanceId];
-              prefs.setString(ModelConstants.sharedAttendanceId,
-                  sharedAttendanceId.toString());
-              prefs.setString(ModelConstants.startTime, today.toString());
               ToastWidget.functionToastWidget(
                   TextConstants.addAttendanceSuccessToast,
                   ColorConstants.toastSuccessColor);
@@ -163,6 +172,8 @@ class AttendanceService {
           }
         } else {}
       } else {
+        log(
+            "AttendanceService - addAttendance(Locations are not equal.)");
         showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -199,6 +210,7 @@ class AttendanceService {
             });
       }
     } on DioError catch (e) {
+      print(e);
       ToastWidget.functionToastWidget(
           e.toString(), ColorConstants.toastWarningColor);
     }
@@ -212,15 +224,18 @@ class AttendanceService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var accessToken = prefs.getString(ModelConstants.token);
     try {
+      log("AttendanceService - updateDayAttendanceEndTimeById()");
       DateTime today = DateTime.now();
       String date = "${today.year}-${today.month}-${today.day}";
       String endTime = "${today.hour}:${today.minute}";
       String location = await getCurrentLocationPlusCode();
-
+      log("Location, Date and Time. $date, $endTime And $location");
       String companyLocation =
           prefs.getString(ModelConstants.companyLocation).toString();
 
       if (location == companyLocation) {
+        log(
+            "AttendanceService - updateDayAttendanceEndTimeById(Locations are equal)");
         var userId = prefs.getString(ModelConstants.sharedUserId).toString();
         Response res;
         res = await dio.get(
@@ -236,17 +251,31 @@ class AttendanceService {
         );
 
         if (res.statusCode == 200) {
+          log(
+              "AttendanceService - addAttendance(Status code equals to 200)");
           String atteResDate = res.data[ModelConstants.date].toString();
           var attendanceId = res.data[ModelConstants.attendanceId];
-          var atteResEndDate = res.data[ModelConstants.endTime];
+          var atteResEndTime = res.data[ModelConstants.endTime];
           var startTime = res.data[ModelConstants.startTime];
 
           if (date == atteResDate) {
+            log(
+                "AttendanceService - addAttendance(Two dates are equal)");
             if (startTime != null) {
-              if (atteResEndDate == null) {
-                DateTime attStartTime = DateTime.parse(
-                    prefs.getString(ModelConstants.startTime).toString());
-                int timeDifference = today.difference(attStartTime).inHours;
+              log(
+                  "AttendanceService - addAttendance(Start time is available)");
+              if (atteResEndTime == null) {
+                log(
+                    "AttendanceService - addAttendance(No recorded end time)");
+
+                var format = DateFormat("HH:mm");
+                var start = format.parse(startTime);
+                var end = format.parse(endTime);
+                var timeDifference = end.difference(start);
+                var workedHours = double.parse(timeDifference.inHours.toString());
+
+                log(
+                    "AttendanceService - addAttendance(Start time - $startTime, End time - $endTime, Time difference - $timeDifference, Worked hours - $workedHours)");
 
                 if (timeDifference.isNegative) {
                   Navigator.pushReplacement(
@@ -258,122 +287,120 @@ class AttendanceService {
                       TextConstants.startTimeValidation,
                       ColorConstants.toastErrorColor);
                 } else {
-                  double workedHours = double.parse(timeDifference.toString());
-                  if (workedHours > ModelConstants.halfDayTime &&
-                      workedHours < ModelConstants.fullDayTime) {
-                    Response response;
-                    response = await dio.put(
-                      BackendAPIConstants.rootAPI +
-                          BackendAPIConstants.updateAttendanceByIdAPI +
-                          attendanceId.toString(),
-                      data: {
-                        ModelConstants.endTime: endTime,
-                        ModelConstants.workedHours: workedHours,
-                        ModelConstants.halfDay: ModelConstants.halfDayTrueBool
-                      },
-                      options: Options(
-                        contentType: Headers.jsonContentType,
-                        headers: {ModelConstants.auth: "Bearer $accessToken"},
-                      ),
-                    );
+                    if (workedHours > ModelConstants.halfDayTime &&
+                        workedHours < ModelConstants.fullDayTime) {
+                          log(
+                    "AttendanceService - addAttendance(Half day)");
+                      Response response;
+                      response = await dio.put(
+                        BackendAPIConstants.rootAPI +
+                            BackendAPIConstants.updateAttendanceEndTimeByIdAPI +
+                            attendanceId.toString(),
+                        data: {
+                          ModelConstants.endTime: endTime,
+                          ModelConstants.workedHours: workedHours,
+                          ModelConstants.halfDay: ModelConstants.halfDayTrueBool
+                        },
+                        options: Options(
+                          contentType: Headers.jsonContentType,
+                          headers: {ModelConstants.auth: "Bearer $accessToken"},
+                        ),
+                      );
 
-                    if (response.statusCode == 200) {
-                      prefs.remove(ModelConstants.attendanceId);
-                      prefs.remove(ModelConstants.startTime);
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const UserHomeScreen()));
+                      if (response.statusCode == 200) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserHomeScreen()));
 
-                      ToastWidget.functionToastWidget(
-                          TextConstants.updateAttendanceEndTimeSuccessToast,
-                          ColorConstants.toastSuccessColor);
+                        ToastWidget.functionToastWidget(
+                            TextConstants.updateAttendanceEndTimeSuccessToast,
+                            ColorConstants.toastSuccessColor);
+                      } else {
+                        ToastWidget.functionToastWidget(
+                            TextConstants.updateAttendanceEndTimeErrorToast,
+                            ColorConstants.toastErrorColor);
+
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserHomeScreen()));
+                      }
+                    } else if (workedHours >= ModelConstants.fullDayTime &&
+                        workedHours < ModelConstants.overWorkedDayTime) {
+                      log("AttendanceService - addAttendance(Full day)");
+                      Response response;
+                      response = await dio.put(
+                        BackendAPIConstants.rootAPI +
+                            BackendAPIConstants.updateAttendanceEndTimeByIdAPI +
+                            attendanceId.toString(),
+                        data: {
+                          ModelConstants.endTime: endTime,
+                          ModelConstants.workedHours: workedHours,
+                          ModelConstants.halfDay: ModelConstants.halfDayFlaseBool
+                        },
+                        options: Options(
+                          contentType: Headers.jsonContentType,
+                          headers: {ModelConstants.auth: "Bearer $accessToken"},
+                        ),
+                      );
+
+                      if (response.statusCode == 200) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserHomeScreen()));
+
+                        ToastWidget.functionToastWidget(
+                            TextConstants.updateAttendanceEndTimeSuccessToast,
+                            ColorConstants.toastSuccessColor);
+                      } else {
+                        ToastWidget.functionToastWidget(
+                            TextConstants.updateAttendanceEndTimeErrorToast,
+                            ColorConstants.toastErrorColor);
+
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserHomeScreen()));
+                      }
                     } else {
-                      ToastWidget.functionToastWidget(
-                          TextConstants.updateAttendanceEndTimeErrorToast,
-                          ColorConstants.toastErrorColor);
-
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const UserHomeScreen()));
-                    }
-                  } else if (workedHours >= ModelConstants.fullDayTime &&
-                      workedHours < ModelConstants.overWorkedDayTime) {
-                    Response response;
-                    response = await dio.put(
-                      BackendAPIConstants.rootAPI +
-                          BackendAPIConstants.updateAttendanceByIdAPI +
-                          attendanceId.toString(),
-                      data: {
-                        ModelConstants.endTime: endTime,
-                        ModelConstants.workedHours: workedHours,
-                        ModelConstants.halfDay: ModelConstants.halfDayFlaseBool
-                      },
-                      options: Options(
-                        contentType: Headers.jsonContentType,
-                        headers: {ModelConstants.auth: "Bearer $accessToken"},
-                      ),
-                    );
-
-                    if (response.statusCode == 200) {
-                      prefs.remove(ModelConstants.attendanceId);
-                      prefs.remove(ModelConstants.startTime);
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const UserHomeScreen()));
-
-                      ToastWidget.functionToastWidget(
-                          TextConstants.updateAttendanceEndTimeSuccessToast,
-                          ColorConstants.toastSuccessColor);
-                    } else {
-                      ToastWidget.functionToastWidget(
-                          TextConstants.updateAttendanceEndTimeErrorToast,
-                          ColorConstants.toastErrorColor);
-
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const UserHomeScreen()));
-                    }
-                  } else {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text(
-                              TextConstants.alertTitle,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: SizeConstants.alertTitleFontSize,
-                                  color: ColorConstants.errorBorder),
-                            ),
-                            content: const Text(
-                              TextConstants.wrongTimeRangeErrorToast,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: SizeConstants.alertContentFontSize,
-                                  color: ColorConstants.errorBorder),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: const Text(
-                                  TextConstants.alertButtonOk,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          SizeConstants.alertButtonFontSize,
-                                      color: ColorConstants.errorBorder),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text(
+                                TextConstants.alertTitle,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: SizeConstants.alertTitleFontSize,
+                                    color: ColorConstants.errorBorder),
                               ),
-                            ],
-                          );
-                        });
-                  }
+                              content: const Text(
+                                TextConstants.wrongTimeRangeErrorToast,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: SizeConstants.alertContentFontSize,
+                                    color: ColorConstants.errorBorder),
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text(
+                                    TextConstants.alertButtonOk,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            SizeConstants.alertButtonFontSize,
+                                        color: ColorConstants.errorBorder),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    }
                 }
               } else {
                 showDialog(
@@ -534,55 +561,227 @@ class AttendanceService {
 
   // ---------------------------------------------- Update Attendance By Id Function Start ----------------------------------------------
 
-  updateAttendanceById(date, attendanceId, startTime, endTime, workedHours,
-      username, companyName, companyLocation, context) async {
-    Response response;
+  updateAttendanceById(attendanceId, startTime, endTime, context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var accessToken = prefs.getString(ModelConstants.token);
+    debugPrint(
+                  "AttendanceService - addAttendance(Attendance Id - $attendanceId, Start time - $startTime, End time - ${endTime.runtimeType})");
     try {
-      response = await dio.put(
-        BackendAPIConstants.rootAPI +
-            BackendAPIConstants.updateAttendanceByIdAPI +
-            attendanceId,
-        data: {
-          ModelConstants.startTime: startTime,
-          ModelConstants.endTime: endTime,
-          ModelConstants.workedHours: workedHours,
-        },
-        options: Options(
-          contentType: Headers.jsonContentType,
-          headers: {ModelConstants.auth: "Bearer $accessToken"},
-        ),
-      );
+      if (startTime != null) {
+              debugPrint(
+                  "AttendanceService - addAttendance(Start time is available)");
+              if (endTime != null) {
+                debugPrint(
+                    "AttendanceService - addAttendance(End time is available)");
 
-      if (response.statusCode == 200) {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const ManageAttendancesScreen()));
+                var format = DateFormat("HH:mm");
+                var start = format.parse(startTime);
+                var end = format.parse(endTime);
+                var timeDifference = end.difference(start);
+                var workedHours = double.parse(timeDifference.inHours.toString());
 
-        ToastWidget.functionToastWidget(
-            TextConstants.updateAttendanceSuccessToast,
-            ColorConstants.toastSuccessColor);
-      } else {
-        ToastWidget.functionToastWidget(
-            TextConstants.updateAttendanceErrorToast,
-            ColorConstants.toastErrorColor);
+                debugPrint(
+                    "AttendanceService - addAttendance(Start time - $startTime, End time - $endTime, Time difference - $timeDifference, Worked hours - $workedHours)");
 
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SingleAttendanceScreen(
-                      attId: attendanceId,
-                      attDate: date,
-                      attStartTime: startTime,
-                      attEndTime: endTime.toString(),
-                      attWorkedHours: (workedHours).toString(),
-                      attUsername: username,
-                      attCompanyName: companyName,
-                      attCompanyLocation: companyLocation,
-                    )));
-      }
+                if (timeDifference.isNegative) {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ManageAttendancesScreen()));
+
+                  ToastWidget.functionToastWidget(
+                      TextConstants.startTimeValidation,
+                      ColorConstants.toastErrorColor);
+                } else {
+                    if (workedHours > ModelConstants.halfDayTime &&
+                        workedHours < ModelConstants.fullDayTime) {
+                          debugPrint(
+                    "AttendanceService - addAttendance(Half day)");
+                      Response response;
+                      response = await dio.put(
+                        BackendAPIConstants.rootAPI +
+                            BackendAPIConstants.updateAttendanceByIdAPI +
+                            attendanceId.toString(),
+                        data: {
+                          ModelConstants.startTime: startTime,
+                          ModelConstants.endTime: endTime,
+                          ModelConstants.workedHours: workedHours,
+                          ModelConstants.halfDay: ModelConstants.halfDayTrueBool
+                        },
+                        options: Options(
+                          contentType: Headers.jsonContentType,
+                          headers: {ModelConstants.auth: "Bearer $accessToken"},
+                        ),
+                      );
+
+                      if (response.statusCode == 200) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ManageAttendancesScreen()));
+
+                        ToastWidget.functionToastWidget(
+                            TextConstants.updateAttendanceEndTimeSuccessToast,
+                            ColorConstants.toastSuccessColor);
+                      } else {
+                        ToastWidget.functionToastWidget(
+                            TextConstants.updateAttendanceEndTimeErrorToast,
+                            ColorConstants.toastErrorColor);
+
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserHomeScreen()));
+                      }
+                    } else if (workedHours >= ModelConstants.fullDayTime &&
+                        workedHours < ModelConstants.overWorkedDayTime) {
+                      debugPrint("AttendanceService - addAttendance(Full day)");
+                      Response response;
+                      response = await dio.put(
+                        BackendAPIConstants.rootAPI +
+                            BackendAPIConstants.updateAttendanceByIdAPI +
+                            attendanceId.toString(),
+                        data: {
+                          ModelConstants.startTime: startTime,
+                          ModelConstants.endTime: endTime,
+                          ModelConstants.workedHours: workedHours,
+                          ModelConstants.halfDay: ModelConstants.halfDayFlaseBool
+                        },
+                        options: Options(
+                          contentType: Headers.jsonContentType,
+                          headers: {ModelConstants.auth: "Bearer $accessToken"},
+                        ),
+                      );
+
+                      if (response.statusCode == 200) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ManageAttendancesScreen()));
+
+                        ToastWidget.functionToastWidget(
+                            TextConstants.updateAttendanceEndTimeSuccessToast,
+                            ColorConstants.toastSuccessColor);
+                      } else {
+                        ToastWidget.functionToastWidget(
+                            TextConstants.updateAttendanceEndTimeErrorToast,
+                            ColorConstants.toastErrorColor);
+
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ManageAttendancesScreen()));
+                      }
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text(
+                                TextConstants.alertTitle,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: SizeConstants.alertTitleFontSize,
+                                    color: ColorConstants.errorBorder),
+                              ),
+                              content: const Text(
+                                TextConstants.wrongTimeRangeErrorToast,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: SizeConstants.alertContentFontSize,
+                                    color: ColorConstants.errorBorder),
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text(
+                                    TextConstants.alertButtonOk,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            SizeConstants.alertButtonFontSize,
+                                        color: ColorConstants.errorBorder),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    }
+                }
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                          TextConstants.alertTitle,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConstants.alertTitleFontSize,
+                              color: ColorConstants.errorBorder),
+                        ),
+                        content: const Text(
+                          TextConstants.alreadyUpdatedAttendanceErrorToast,
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: SizeConstants.alertContentFontSize,
+                              color: ColorConstants.errorBorder),
+                        ),
+                        actions: [
+                          TextButton(
+                            child: const Text(
+                              TextConstants.alertButtonOk,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: SizeConstants.alertButtonFontSize,
+                                  color: ColorConstants.errorBorder),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              }
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text(
+                        TextConstants.alertTitle,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConstants.alertTitleFontSize,
+                            color: ColorConstants.errorBorder),
+                      ),
+                      content: const Text(
+                        TextConstants.haveNotAddedAttendanceErrorToast,
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: SizeConstants.alertContentFontSize,
+                            color: ColorConstants.errorBorder),
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text(
+                            TextConstants.alertButtonOk,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: SizeConstants.alertButtonFontSize,
+                                color: ColorConstants.errorBorder),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            }
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
           e.toString(), ColorConstants.toastWarningColor);

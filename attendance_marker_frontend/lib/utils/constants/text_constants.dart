@@ -124,6 +124,8 @@ class TextConstants {
       "Seems like you have already added the start time for today!";
   static const String alreadyUpdatedAttendanceErrorToast =
       "Seems like you have already added the end time for today!";
+  static const String notAddedEndTimeAttendanceErrorToast =
+      "Seems like you have forgot to add the end time!";
   static const String haveNotAddedAttendanceErrorToast =
       "Seems like you have not add the start time for today!";
   static const String attendanceDateErrorToast =
@@ -200,6 +202,7 @@ class TextConstants {
   static const String cardAttendanceUserCompany = "Company";
   static const String cardAttendanceWorkedHours = "Worked hours";
   static const String notYetRecordedText = "Not yet recorded";
+  static const String notYetCalculatedText = "Not yet calculated";
   static const String adminCardCompanyTitle = "COMPANIES";
   static const String adminCardUserTitle = "USERS";
   static const String adminCardAttendancesTitle = "ATTENDANCES";

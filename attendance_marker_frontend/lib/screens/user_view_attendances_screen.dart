@@ -66,6 +66,7 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
       }
       return response.data;
     } on DioError catch (e) {
+      print(e);
       ToastWidget.functionToastWidget(
           e.toString(), ColorConstants.toastWarningColor);
     }
