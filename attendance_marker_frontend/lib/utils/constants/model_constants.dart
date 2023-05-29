@@ -7,7 +7,6 @@ class ModelConstants {
   static const String companyModel = "company";
   static const String token = "token";
   static const String user = "user";
-  static const String statCode = "statCode";
   static const String userRoles = "roles";
   static const String userRole = "user";
   static const List<dynamic> authRole = ["ROLE_USER"];
@@ -42,4 +41,22 @@ class ModelConstants {
   static const String sharedAttendanceId = "attendanceId";
   static const String sharedCompanyId = "companyId";
   static const String sharedUserId = "userId";
+
+  // API responses
+  static const String apiStatusCode = "statusCode";
+  static const String apiJwtResponse = "jwtResponse";
+  static const String apiAttendanceRequest = "attendanceRequest";
+  static const String apiCompanyRequest = "companyRequest";
+  static const String apiUserRequest = "userRequest";
+  static const String apiLoginRequest = "loginRequest";
+  static const String apiRegisterRequest = "registerRequest";
+  static const String apiAttendanceUpdateEndTimeRequest = "attendanceUpdateEndTimeRequest";
+  static const String apiAttendanceUpdateRequestById = "attendanceUpdateRequestById";
+  static const String apiAttendanceResponse = "attendanceResponse";
+  static const String apiAttendanceResponseList = "attendanceResponseList";
+  static const String apiCompanyResponse = "companyResponse";
+  static const String apiCompanyResponseList = "companyResponseList";
+  static const String apiUserResponse = "userResponse";
+  static const String apiUserResponseList = "userResponseList";
+  static const String apiMessage = "message";
 }

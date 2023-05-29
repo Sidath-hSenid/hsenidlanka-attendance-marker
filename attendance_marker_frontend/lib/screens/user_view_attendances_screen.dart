@@ -48,25 +48,27 @@ class _UserViewAttendancesScreenState extends State<UserViewAttendancesScreen> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        var items = response.data;
-        ToastWidget.functionToastWidget(
-            TextConstants.userAllAttendanceSuccessToast,
-            ColorConstants.toastSuccessColor);
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        var items = response.data[ModelConstants.apiAttendanceResponseList];
         setState(() {
           attendances = items;
         });
         isLoading = false;
-      } else {
-        ToastWidget.functionToastWidget(TextConstants.allAttendanceErrorToast,
-            ColorConstants.toastErrorColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
         setState(() {
           attendances = [];
         });
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
+        ToastWidget.functionToastWidget(TextConstants.allAttendanceErrorToast,
+            ColorConstants.toastErrorColor);
       }
       return response.data;
     } on DioError catch (e) {
-      print(e);
       ToastWidget.functionToastWidget(
           e.toString(), ColorConstants.toastWarningColor);
     }

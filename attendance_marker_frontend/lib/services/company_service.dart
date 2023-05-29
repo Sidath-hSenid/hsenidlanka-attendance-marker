@@ -11,11 +11,10 @@ import '../utils/constants/color_constants.dart';
 import '../utils/constants/text_constants.dart';
 
 class CompanyService {
-
   Dio dio = Dio();
 
   // ---------------------------------------------- Add Company Function Start ----------------------------------------------
-  
+
   addCompany(companyName, companyLocation, context) async {
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -34,9 +33,7 @@ class CompanyService {
         ),
       );
 
-      print(response.statusCode);
-
-      if (response.statusCode == 201) {
+      if (response.data[ModelConstants.apiStatusCode] == 201) {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -45,7 +42,7 @@ class CompanyService {
         ToastWidget.functionToastWidget(
             TextConstants.addCompanyButtonSuccessToast,
             ColorConstants.toastSuccessColor);
-      } else if (response.statusCode == 400) {
+      } else if (response.data[ModelConstants.apiStatusCode] == 403) {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -74,7 +71,7 @@ class CompanyService {
   // ---------------------------------------------- Add Company Function End ----------------------------------------------
 
   // ---------------------------------------------- Update Company By Id Function Start ----------------------------------------------
-  
+
   updateCompanyById(companyId, companyName, companyLocation, context) async {
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -95,7 +92,7 @@ class CompanyService {
         ),
       );
 
-      if (response.statusCode == 200) {
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -103,6 +100,28 @@ class CompanyService {
 
         ToastWidget.functionToastWidget(TextConstants.updateCompanySuccessToast,
             ColorConstants.toastSuccessColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SingleCompanyScreen(
+                    comId: companyId,
+                    comName: companyName,
+                    comLocation: companyLocation)));
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SingleCompanyScreen(
+                    comId: companyId,
+                    comName: companyName,
+                    comLocation: companyLocation)));
       } else {
         ToastWidget.functionToastWidget(TextConstants.updateCompanyErrorToast,
             ColorConstants.toastErrorColor);
@@ -124,7 +143,7 @@ class CompanyService {
   // ---------------------------------------------- Update Company By Id Function End ----------------------------------------------
 
   // ---------------------------------------------- Delete Company By Id Function Start ----------------------------------------------
-  
+
   deleteCompanyById(companyId, context) async {
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -140,7 +159,7 @@ class CompanyService {
         ),
       );
 
-      if (response.data[ModelConstants.statCode] != 400) {
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -148,8 +167,24 @@ class CompanyService {
 
         ToastWidget.functionToastWidget(TextConstants.deleteCompanySuccessToast,
             ColorConstants.toastSuccessColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ManageCompaniesScreen()));
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ManageCompaniesScreen()));
       } else {
-        ToastWidget.functionToastWidget(TextConstants.deleteCompanyErrorToast,
+        ToastWidget.functionToastWidget(TextConstants.deleteCompanySuccessToast,
             ColorConstants.toastErrorColor);
 
         Navigator.pushReplacement(
@@ -164,6 +199,4 @@ class CompanyService {
   }
 
   // ---------------------------------------------- Delete Company By Id Function End ----------------------------------------------
-
 }
-

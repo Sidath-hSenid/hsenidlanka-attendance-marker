@@ -7,6 +7,7 @@ import 'package:attendance_marker_frontend/utils/constants/icon_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/text_constants.dart';
 import 'package:flutter/material.dart';
 
+import '../services/user_service.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/size_constants.dart';
 import '../utils/widgets/navigational_drawer_widget.dart';
@@ -37,7 +38,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               Tab(
                   icon: Icon(IconConstants.addUser),
                   text: TextConstants.addUserAppBarTitleText),
-              
               Tab(
                   icon: Icon(IconConstants.viewCompanies),
                   text: TextConstants.usersByCompanyAppBarTitleText)
@@ -52,7 +52,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 size: SizeConstants.appBarIconSize,
               ),
               onPressed: () {
-                // do something
+                UserService().logOut(context);
               },
             ),
           ],

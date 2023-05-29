@@ -7,11 +7,12 @@ class BackendAPIConstants {
   // User API
   static const String loginAPI = '/auth/login';
   static const String registerAPI = '/auth/register';
+  static const String logoutAPI = '/auth/log-out';
   static const String getAllUsersAPI = '/test/users';
   static const String getUserByIdAPI = '/test/users/';
   static const String forgotPasswordAPI = '/test/users/forgot-password';
   static const String validateOTPAPI = '/test/users/validate-otp';
-  static const String resetPasswordAPI = '/test/users/reset-password';
+  static const String resetPasswordAPI = '/test/users/reset-password/';
   static const String updateUserByIdAPI = '/test/users/';
   static const String deleteUserByIdAPI = '/test/users/';
   static const String getUsersByCompanyIdAPI = '/test/users/company-id/';

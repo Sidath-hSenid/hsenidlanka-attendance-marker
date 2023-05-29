@@ -68,20 +68,23 @@ class _SingleUserScreenState extends State<SingleUserScreen> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        ToastWidget.functionToastWidget(TextConstants.allCompanySuccessToast,
-            ColorConstants.toastSuccessColor);
-        print((response.data).runtimeType);
-        var items = response.data;
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        var items = response.data[ModelConstants.apiCompanyResponseList];
         setState(() {
           companies = items;
         });
         return companies;
-      } else {
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
         setState(() {
           companies = [];
         });
 
+        ToastWidget.functionToastWidget(
+            TextConstants.allCompanyErrorToast, ColorConstants.toastErrorColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
         ToastWidget.functionToastWidget(
             TextConstants.allCompanyErrorToast, ColorConstants.toastErrorColor);
       }

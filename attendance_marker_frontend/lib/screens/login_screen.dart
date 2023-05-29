@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:attendance_marker_frontend/screens/forgot_password_screen.dart';
+import 'package:attendance_marker_frontend/screens/reset_password_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/color_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:attendance_marker_frontend/utils/widgets/form_text_field_widget.dart';
@@ -30,8 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
         backgroundColor: ColorConstants.primaryColor,
-        // appBar:
-        //     AppBarWidget.functionAppBarBackButton(TextValues.addCompanyAppBarTitleText, context),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -138,10 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const ForgotPasswordScreen()));
+                                            const ResetPasswordScreen()));
                               },
                               child: const Text(
-                                TextConstants.forgotPasswordLink,
+                                TextConstants.resetPasswordLink,
                                 style: TextStyle(
                                     fontWeight: FontWeight.w700,
                                     fontSize: SizeConstants

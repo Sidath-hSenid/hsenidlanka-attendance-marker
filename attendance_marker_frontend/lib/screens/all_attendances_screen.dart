@@ -46,20 +46,24 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        var items = response.data;
-        ToastWidget.functionToastWidget(TextConstants.allAttendanceSuccessToast,
-            ColorConstants.toastSuccessColor);
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        var items = response.data[ModelConstants.apiAttendanceResponseList];
         setState(() {
           attendances = items;
         });
         isLoading = false;
-      } else {
-        ToastWidget.functionToastWidget(TextConstants.allAttendanceErrorToast,
-            ColorConstants.toastErrorColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
         setState(() {
           attendances = [];
         });
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
+        ToastWidget.functionToastWidget(TextConstants.allAttendanceErrorToast,
+            ColorConstants.toastErrorColor);
       }
       return response.data;
     } on DioError catch (e) {
@@ -285,13 +289,14 @@ class _AllAttendancesScreenState extends State<AllAttendancesScreen> {
                                           height: SizeConstants
                                               .cardContainerMinHeight),
                                       Text(
-                                        (attendances[index]
-                                                    [ModelConstants.workedHours]) !=
+                                        (attendances[index][ModelConstants
+                                                    .workedHours]) !=
                                                 null
                                             ? (attendances[index]
                                                     [ModelConstants.workedHours]
                                                 .toString())
-                                            : TextConstants.notYetCalculatedText,
+                                            : TextConstants
+                                                .notYetCalculatedText,
                                         maxLines: 1,
                                         style: TextStyle(
                                           color:

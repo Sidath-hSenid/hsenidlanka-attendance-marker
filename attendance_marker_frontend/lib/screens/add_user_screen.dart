@@ -60,20 +60,24 @@ class _AddUserScreenState extends State<AddUserScreen> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        ToastWidget.functionToastWidget(TextConstants.allCompanySuccessToast,
-            ColorConstants.toastSuccessColor);
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
         print((response.data).runtimeType);
-        var items = response.data;
+        var items = response.data[ModelConstants.apiCompanyResponseList];
         setState(() {
           companies = items;
         });
         return companies;
-      } else {
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
         setState(() {
           companies = [];
         });
 
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
         ToastWidget.functionToastWidget(
             TextConstants.allCompanyErrorToast, ColorConstants.toastErrorColor);
       }
@@ -140,7 +144,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         (value) {
                           if (value!.isEmpty) {
                             return TextConstants.emptyValueValidation;
-                          } else {
+                          }else if (value.length < 3) {
+                            return TextConstants.passwordLengthValidation;
+                          }else {
                             return null;
                           }
                         }),

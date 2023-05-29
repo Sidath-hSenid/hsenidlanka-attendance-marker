@@ -53,12 +53,10 @@ class _UsersByCompanyScreenState extends State<UsersByCompanyScreen> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        var items = response.data;
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        var items = response.data[ModelConstants.apiUserResponseList];
 
-        if (items.toString().length != 2) {
-          ToastWidget.functionToastWidget(TextConstants.allUserSuccessToast,
-              ColorConstants.toastSuccessColor);
+        if (items != null) {
           setState(() {
             users = items;
           });
@@ -70,12 +68,18 @@ class _UsersByCompanyScreenState extends State<UsersByCompanyScreen> {
             users = [];
           });
         }
-      } else {
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
         ToastWidget.functionToastWidget(
-            TextConstants.allUserErrorToast, ColorConstants.toastErrorColor);
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
         setState(() {
           users = [];
         });
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
+        ToastWidget.functionToastWidget(
+            TextConstants.allUserErrorToast, ColorConstants.toastErrorColor);
       }
       return response.data;
     } on DioError catch (e) {
@@ -101,8 +105,7 @@ class _UsersByCompanyScreenState extends State<UsersByCompanyScreen> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onLongPress: () {
-                    var userId =
-                        users[index][ModelConstants.userId];
+                    var userId = users[index][ModelConstants.userId];
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -145,8 +148,7 @@ class _UsersByCompanyScreenState extends State<UsersByCompanyScreen> {
                                       color: ColorConstants.primaryColor),
                                 ),
                                 onPressed: () {
-                                  UserService().deleteUserById(
-                                      userId, context);
+                                  UserService().deleteUserById(userId, context);
                                 },
                               ),
                             ],
@@ -161,8 +163,8 @@ class _UsersByCompanyScreenState extends State<UsersByCompanyScreen> {
                         SizeConstants.cardPaddingBottom),
                     child: Card(
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(SizeConstants.cardBorderRadius),
+                        borderRadius: BorderRadius.circular(
+                            SizeConstants.cardBorderRadius),
                       ),
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: Column(
@@ -184,7 +186,8 @@ class _UsersByCompanyScreenState extends State<UsersByCompanyScreen> {
                                     width: SizeConstants.cardContainerWidth),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Container(
                                           height: SizeConstants
@@ -210,8 +213,8 @@ class _UsersByCompanyScreenState extends State<UsersByCompanyScreen> {
                                           color:
                                               ColorConstants.cardValueTextColor,
                                           fontWeight: FontWeight.normal,
-                                          fontSize:
-                                              SizeConstants.cardValueTextFontSize,
+                                          fontSize: SizeConstants
+                                              .cardValueTextFontSize,
                                         ),
                                       ),
                                       Container(
@@ -240,8 +243,8 @@ class _UsersByCompanyScreenState extends State<UsersByCompanyScreen> {
                                           color:
                                               ColorConstants.cardValueTextColor,
                                           fontWeight: FontWeight.normal,
-                                          fontSize:
-                                              SizeConstants.cardValueTextFontSize,
+                                          fontSize: SizeConstants
+                                              .cardValueTextFontSize,
                                         ),
                                       ),
                                     ],

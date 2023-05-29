@@ -47,20 +47,24 @@ class _AttendancesAllUsersScreenState extends State<AttendancesAllUsersScreen> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        var items = response.data;
-        ToastWidget.functionToastWidget(TextConstants.allUserSuccessToast,
-            ColorConstants.toastSuccessColor);
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        var items = response.data[ModelConstants.apiUserResponseList];
         setState(() {
           users = items;
         });
         isLoading = false;
-      } else {
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
         ToastWidget.functionToastWidget(
-            TextConstants.allUserErrorToast, ColorConstants.toastErrorColor);
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
         setState(() {
           users = [];
         });
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
+        ToastWidget.functionToastWidget(
+            TextConstants.allUserErrorToast, ColorConstants.toastErrorColor);
       }
       return response.data;
     } on DioError catch (e) {
@@ -68,7 +72,7 @@ class _AttendancesAllUsersScreenState extends State<AttendancesAllUsersScreen> {
           e.toString(), ColorConstants.toastWarningColor);
     }
   }
-  
+
   // ---------------------------------------------- Get All Users Function End ----------------------------------------------
 
   @override

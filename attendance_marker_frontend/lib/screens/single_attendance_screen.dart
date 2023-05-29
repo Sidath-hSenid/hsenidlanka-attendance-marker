@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:attendance_marker_frontend/services/attendance_service.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/icon_constants.dart';

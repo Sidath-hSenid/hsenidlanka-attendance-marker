@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:attendance_marker_frontend/screens/admin_home_screen.dart';
+import 'package:attendance_marker_frontend/screens/login_screen.dart';
 import 'package:attendance_marker_frontend/screens/manage_users_screen.dart';
-import 'package:attendance_marker_frontend/screens/reset_password_screen.dart';
 import 'package:attendance_marker_frontend/screens/user_home_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/backend_api_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/color_constants.dart';
@@ -16,11 +16,10 @@ import '../screens/single_user_screen.dart';
 import '../utils/widgets/toast_widget.dart';
 
 class UserService {
-
   Dio dio = Dio();
 
   // ---------------------------------------------- Login Function Start ----------------------------------------------
-  
+
   login(username, password, context) async {
     Response response;
     try {
@@ -31,15 +30,19 @@ class UserService {
             ModelConstants.password: password,
           },
           options: Options(contentType: Headers.jsonContentType));
-      if (response.statusCode == 200) {
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        var accessToken = response.data[ModelConstants.token];
-        var userId = response.data[ModelConstants.userId];
+        var accessToken =
+            response.data[ModelConstants.apiJwtResponse][ModelConstants.token];
+        var userId =
+            response.data[ModelConstants.apiJwtResponse][ModelConstants.userId];
         prefs.setString(ModelConstants.token, accessToken);
         prefs.setString(ModelConstants.sharedUserId, userId);
 
-        if (response.data[ModelConstants.userRoles].toString() ==
+        if (response.data[ModelConstants.apiJwtResponse]
+                    [ModelConstants.userRoles]
+                .toString() ==
             ModelConstants.authRole.toString()) {
           Response res;
           res = await dio.get(
@@ -51,18 +54,24 @@ class UserService {
                 headers: {ModelConstants.auth: "Bearer $accessToken"},
               ));
 
-          if (res.statusCode == 200) {
-            var userId = res.data[ModelConstants.userId].toString();
-            var username = res.data[ModelConstants.username].toString();
-            var email = res.data[ModelConstants.email].toString();
-            var companyId = res.data[ModelConstants.company]
-                    [ModelConstants.companyId]
+          if (res.data[ModelConstants.apiStatusCode] == 200) {
+            var userId = res.data[ModelConstants.apiUserResponse]
+                    [ModelConstants.userId]
                 .toString();
-            var companyName = res.data[ModelConstants.company]
-                    [ModelConstants.companyName]
+            var username = res.data[ModelConstants.apiUserResponse]
+                    [ModelConstants.username]
                 .toString();
-            var companyLocation = res.data[ModelConstants.company]
-                    [ModelConstants.companyLocation]
+            var email = res.data[ModelConstants.apiUserResponse]
+                    [ModelConstants.email]
+                .toString();
+            var companyId = res.data[ModelConstants.apiUserResponse]
+                    [ModelConstants.company][ModelConstants.companyId]
+                .toString();
+            var companyName = res.data[ModelConstants.apiUserResponse]
+                    [ModelConstants.company][ModelConstants.companyName]
+                .toString();
+            var companyLocation = res.data[ModelConstants.apiUserResponse]
+                    [ModelConstants.company][ModelConstants.companyLocation]
                 .toString();
 
             prefs.setString(ModelConstants.sharedUserId, userId);
@@ -89,13 +98,13 @@ class UserService {
               TextConstants.signInButtonSuccessToast,
               ColorConstants.toastSuccessColor);
         }
-      } else {
+      } else if (response.statusCode == 401) {
         ToastWidget.functionToastWidget(TextConstants.signInButtonErrorToast,
             ColorConstants.toastErrorColor);
       }
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
-          e.toString(), ColorConstants.toastWarningColor);
+          TextConstants.signInButtonErrorToast, ColorConstants.toastErrorColor);
     }
   }
 
@@ -121,18 +130,21 @@ class UserService {
             contentType: Headers.jsonContentType,
             headers: {ModelConstants.auth: "Bearer $accessToken"},
           ));
-      if (response.statusCode == 200) {
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
 
         ToastWidget.functionToastWidget(TextConstants.signUpButtonSuccessToast,
             ColorConstants.toastSuccessColor);
-      } else if (response.statusCode == 400) {
+      } else if ((response.data[ModelConstants.apiStatusCode] == 403)) {
         ToastWidget.functionToastWidget(
             TextConstants.signUpButtonAlreadyErrorToast,
             ColorConstants.toastSuccessColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
       } else {
-        ToastWidget.functionToastWidget(TextConstants.signInButtonErrorToast,
+        ToastWidget.functionToastWidget(TextConstants.signUpButtonErrorToast,
             ColorConstants.toastErrorColor);
       }
     } on DioError catch (e) {
@@ -143,68 +155,55 @@ class UserService {
 
   // ---------------------------------------------- Add User Function End ----------------------------------------------
 
-  // ---------------------------------------------- Forgot Password Function Start ----------------------------------------------
-  
-  forgotPassword(email) async {
-    try {
-      await dio.post(
-          BackendAPIConstants.rootAPI + BackendAPIConstants.forgotPasswordAPI,
-          data: {
-            ModelConstants.email: email,
-          },
-          options: Options(contentType: Headers.jsonContentType));
-
-      // return Get.off(() => MainMenu());
-    } on DioError catch (e) {
-      ToastWidget.functionToastWidget(
-          e.toString(), ColorConstants.toastWarningColor);
-    }
-  }
-
-  // ---------------------------------------------- Forgot Password Function End ----------------------------------------------
-
-  // ---------------------------------------------- Validate OTP Function Start ----------------------------------------------
-  
-  validateOTP(otp) async {
-    try {
-      await dio.post(
-          BackendAPIConstants.rootAPI + BackendAPIConstants.validateOTPAPI,
-          data: {
-            'otp': otp,
-          },
-          options: Options(contentType: Headers.jsonContentType));
-
-      // return Get.off(() => MainMenu());
-    } on DioError catch (e) {
-      ToastWidget.functionToastWidget(
-          e.toString(), ColorConstants.toastWarningColor);
-    }
-  }
-
-  // ---------------------------------------------- Validate OTP Function End ----------------------------------------------
-
   // ---------------------------------------------- Reset Password Function Start ----------------------------------------------
-  
-  resetPassword(password) async {
+
+  resetPassword(username, email, password, context) async {
+    Response response;
     try {
-      await dio.post(
-          BackendAPIConstants.rootAPI + BackendAPIConstants.resetPasswordAPI,
+      response = await dio.put(
+          BackendAPIConstants.rootAPI +
+              BackendAPIConstants.resetPasswordAPI +
+              username +
+              ModelConstants.addParams +
+              email,
           data: {
-            'password': password,
+            ModelConstants.password: password,
           },
           options: Options(contentType: Headers.jsonContentType));
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()));
+        ToastWidget.functionToastWidget(
+            TextConstants.resetPasswordButtonSuccessToast,
+            ColorConstants.toastSuccessColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        Navigator.of(context).pop();
 
-      // return Get.off(() => MainMenu());
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        Navigator.of(context).pop();
+
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
+        Navigator.of(context).pop();
+
+        ToastWidget.functionToastWidget(
+            TextConstants.resetPasswordButtonErrorToast,
+            ColorConstants.toastErrorColor);
+      }
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
-          e.toString(), ColorConstants.toastWarningColor);
+          TextConstants.resetPasswordButtonErrorToast,
+          ColorConstants.toastErrorColor);
     }
   }
 
   // ---------------------------------------------- Reset Password Function End ----------------------------------------------
 
   // ---------------------------------------------- Update User By Id Function Start ----------------------------------------------
-  
+
   updateUserById(userId, username, email, company, context) async {
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -226,12 +225,36 @@ class UserService {
         ),
       );
 
-      if (response.statusCode == 200) {
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
 
         ToastWidget.functionToastWidget(TextConstants.updateUserSuccessToast,
             ColorConstants.toastSuccessColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SingleUserScreen(
+                    useId: userId,
+                    usename: username,
+                    useEmail: email,
+                    useCompany: company)));
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SingleUserScreen(
+                    useId: userId,
+                    usename: username,
+                    useEmail: email,
+                    useCompany: company)));
       } else {
         ToastWidget.functionToastWidget(
             TextConstants.updateUserErrorToast, ColorConstants.toastErrorColor);
@@ -254,7 +277,7 @@ class UserService {
   // ---------------------------------------------- Update User By Id Function End ----------------------------------------------
 
   // ---------------------------------------------- Delete User By Id Function Start ----------------------------------------------
-  
+
   deleteUserById(userId, context) async {
     Response response;
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -270,15 +293,27 @@ class UserService {
         ),
       );
 
-      if (response.data[ModelConstants.statCode] != 400) {
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
 
         ToastWidget.functionToastWidget(TextConstants.deleteUserSuccessToast,
             ColorConstants.toastSuccessColor);
-      } else {
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
         ToastWidget.functionToastWidget(
             TextConstants.deleteUserErrorToast, ColorConstants.toastErrorColor);
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
+      } else {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
 
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const ManageUsersScreen()));
@@ -290,4 +325,41 @@ class UserService {
   }
 
   // ---------------------------------------------- Delete User By Id Function End ----------------------------------------------
+
+  // ---------------------------------------------- Log Out Function Start ----------------------------------------------
+
+  logOut(context) async {
+    Response response;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var accessToken = prefs.getString(ModelConstants.token);
+    try {
+      response = await dio.post(
+        BackendAPIConstants.rootAPI + BackendAPIConstants.logoutAPI,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {ModelConstants.auth: "Bearer $accessToken"},
+        ),
+      );
+
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        prefs.remove(ModelConstants.token);
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+        ToastWidget.functionToastWidget(TextConstants.signOutButtonSuccessToast,
+            ColorConstants.toastSuccessColor);
+      } else {
+        ToastWidget.functionToastWidget(TextConstants.signOutButtonErrorToast,
+            ColorConstants.toastErrorColor);
+
+        Navigator.of(context).pop();
+      }
+    } on DioError catch (e) {
+      ToastWidget.functionToastWidget(
+          e.toString(), ColorConstants.toastWarningColor);
+    }
+  }
+
+  // ---------------------------------------------- Log Out Function End ----------------------------------------------
 }

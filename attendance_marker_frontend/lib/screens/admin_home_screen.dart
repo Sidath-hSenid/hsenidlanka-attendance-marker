@@ -24,19 +24,23 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     var screenHeight = size.height;
 
     return Scaffold(
-      drawer:
-            NavigationalDrawerWidget.functionAdminNavigationalDrawer(context),
-      appBar: UserAppBarWidget.functionAppBarInside(TextConstants.appTitle, context),
+      drawer: NavigationalDrawerWidget.functionAdminNavigationalDrawer(context),
+      appBar: UserAppBarWidget.functionAppBarInside(
+          TextConstants.appTitle, context),
       body: Center(
         child: SingleChildScrollView(
             child: Column(
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.all(SizeConstants.cardPaddingAll),
+              padding: const EdgeInsets.all(SizeConstants.cardPaddingAll),
               child: GestureDetector(
                 child: CardWidget.functionAdminHomeCardWidget(
-                    screenHeight, screenWidth, TextConstants.companiesCardImageLink, TextConstants.adminCardCompanyTitle, TextConstants.adminCardCompanySubTitle, context),
+                    screenHeight,
+                    screenWidth,
+                    TextConstants.companiesCardImageLink,
+                    TextConstants.adminCardCompanyTitle,
+                    TextConstants.adminCardCompanySubTitle,
+                    context),
                 onTap: () {
                   Navigator.push(
                       context,
@@ -46,11 +50,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.all(SizeConstants.cardPaddingAll),
+              padding: const EdgeInsets.all(SizeConstants.cardPaddingAll),
               child: GestureDetector(
                 child: CardWidget.functionAdminHomeCardWidget(
-                    screenHeight, screenWidth, TextConstants.usersCardImageLink, TextConstants.adminCardUserTitle, TextConstants.adminCardUserSubTitle, context),
+                    screenHeight,
+                    screenWidth,
+                    TextConstants.usersCardImageLink,
+                    TextConstants.adminCardUserTitle,
+                    TextConstants.adminCardUserSubTitle,
+                    context),
                 onTap: () {
                   Navigator.push(
                       context,
@@ -60,16 +68,21 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.all(SizeConstants.cardPaddingAll),
+              padding: const EdgeInsets.all(SizeConstants.cardPaddingAll),
               child: GestureDetector(
                 child: CardWidget.functionAdminHomeCardWidget(
-                    screenHeight, screenWidth, TextConstants.attendacesCardImageLink, TextConstants.adminCardAttendancesTitle, TextConstants.adminCardAttendancesSubTitle, context),
+                    screenHeight,
+                    screenWidth,
+                    TextConstants.attendacesCardImageLink,
+                    TextConstants.adminCardAttendancesTitle,
+                    TextConstants.adminCardAttendancesSubTitle,
+                    context),
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ManageAttendancesScreen()));
+                          builder: (context) =>
+                              const ManageAttendancesScreen()));
                 },
               ),
             ),

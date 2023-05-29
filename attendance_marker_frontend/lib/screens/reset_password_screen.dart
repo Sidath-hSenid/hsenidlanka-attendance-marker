@@ -1,12 +1,9 @@
 import 'dart:developer';
 
-import 'package:attendance_marker_frontend/screens/forgot_password_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/color_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:attendance_marker_frontend/utils/widgets/form_text_field_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/user_service.dart';
 import '../utils/constants/icon_constants.dart';
@@ -21,8 +18,7 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final formKey = GlobalKey<FormState>();
-  var password = "", confirmPassword = "";
-
+  var password = "", confirmPassword = "", username = "", email = "";
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -31,8 +27,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
     return Scaffold(
         backgroundColor: ColorConstants.primaryColor,
-        // appBar:
-        //     AppBarWidget.functionAppBarNormal(TextValues.signInAppBarTitleText),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -54,18 +48,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(
                               SizeConstants.signInScreenTopLeftRadius))),
-                  height: screenHeight *
-                      SizeConstants.screenHeightTop /
-                      SizeConstants.screenHeightDivideBy,
+                  height:
+                      screenHeight * 1.5 / SizeConstants.screenHeightDivideBy,
                   width: screenWidth,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(
                             SizeConstants.titleTextPaddingHorizontal,
-                            SizeConstants.titleTextPaddingTop,
+                            SizeConstants.textFieldWithAppBarPaddingTop,
                             SizeConstants.titleTextPaddingHorizontal,
                             SizeConstants.titleTextPaddingBottom),
                         child: Text(
@@ -75,6 +68,56 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               fontSize: SizeConstants.titleTextFontSize,
                               color: ColorConstants.titleText),
                         ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                            SizeConstants.textFieldPaddingHorizontal,
+                            SizeConstants.textFieldWithAppBarPaddingTop,
+                            SizeConstants.textFieldPaddingHorizontal,
+                            SizeConstants.textFieldPaddingBottom),
+                        child: FormTextFieldWidget.functionTextFormField(
+                            true,
+                            TextEditingController(text: username),
+                            (value) {
+                              username = value;
+                            },
+                            TextConstants.userName,
+                            false,
+                            const Icon(IconConstants.username),
+                            (value) {
+                              if (value!.isEmpty) {
+                                return TextConstants.emptyValueValidation;
+                              } else {
+                                return null;
+                              }
+                            }),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                            SizeConstants.textFieldPaddingHorizontal,
+                            SizeConstants.textFieldWithAppBarPaddingTop,
+                            SizeConstants.textFieldPaddingHorizontal,
+                            SizeConstants.textFieldPaddingBottom),
+                        child: FormTextFieldWidget.functionTextFormField(
+                            true,
+                            TextEditingController(text: email),
+                            (value) {
+                              email = value;
+                            },
+                            TextConstants.email,
+                            false,
+                            const Icon(IconConstants.email),
+                            (value) {
+                              if (value!.isEmpty) {
+                                return TextConstants.emptyValueValidation;
+                              } else if (RegExp(
+                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                  .hasMatch(value)) {
+                                return null;
+                              } else {
+                                return TextConstants.emailValidation;
+                              }
+                            }),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
@@ -148,58 +191,63 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
                                 showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text(
-                                      TextConstants.alertTitle,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize:
-                                              SizeConstants.alertTitleFontSize,
-                                          color: ColorConstants.primaryColor),
-                                    ),
-                                    content: const Text(
-                                      TextConstants.alertResetPassword,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: SizeConstants
-                                              .alertContentFontSize,
-                                          color: ColorConstants.primaryColor),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text(
-                                          TextConstants.alertButtonCancel,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                          TextConstants.alertTitle,
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: SizeConstants
-                                                  .alertButtonFontSize,
+                                                  .alertTitleFontSize,
                                               color:
                                                   ColorConstants.primaryColor),
                                         ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: const Text(
-                                          TextConstants.alertButtonConfirm,
+                                        content: const Text(
+                                          TextConstants.alertResetPassword,
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.normal,
                                               fontSize: SizeConstants
-                                                  .alertButtonFontSize,
+                                                  .alertContentFontSize,
                                               color:
                                                   ColorConstants.primaryColor),
                                         ),
-                                        onPressed: () {
-                                          UserService().resetPassword(password);
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                });
-                                
+                                        actions: [
+                                          TextButton(
+                                            child: const Text(
+                                              TextConstants.alertButtonCancel,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: SizeConstants
+                                                      .alertButtonFontSize,
+                                                  color: ColorConstants
+                                                      .primaryColor),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text(
+                                              TextConstants.alertButtonConfirm,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: SizeConstants
+                                                      .alertButtonFontSize,
+                                                  color: ColorConstants
+                                                      .primaryColor),
+                                            ),
+                                            onPressed: () {
+                                              UserService().resetPassword(
+                                                  username,
+                                                  email,
+                                                  password,
+                                                  context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
                               } else {
                                 log(TextConstants.buttonLogError);
                               }

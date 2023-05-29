@@ -35,7 +35,7 @@ class SizeConstants {
 
   // Screens
   static const double signInScreenTopLeftRadius = 75;
-  static const double screenHeightDivideBy = 3;
+  static const double screenHeightDivideBy = 2;
   static const double screenHeightTop = 2;
   static const double screenHeightForAttendanceUpdate = 1.2;
 

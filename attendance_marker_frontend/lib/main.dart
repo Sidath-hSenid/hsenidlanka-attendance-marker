@@ -1,9 +1,4 @@
-import 'package:attendance_marker_frontend/screens/admin_home_screen.dart';
-import 'package:attendance_marker_frontend/screens/login_screen.dart';
-import 'package:attendance_marker_frontend/screens/manage_attendances_screen.dart';
-import 'package:attendance_marker_frontend/screens/manage_companies_screen.dart';
 import 'package:attendance_marker_frontend/screens/splash_screen.dart';
-import 'package:attendance_marker_frontend/screens/user_home_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/color_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/text_constants.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: ColorConstants.primaryColor,
       ),
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }

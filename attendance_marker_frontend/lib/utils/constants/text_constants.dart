@@ -5,6 +5,7 @@ class TextConstants {
   // Validation Texts
   static const String emptyValueValidation = "Field can not be empty!";
   static const String emptySelectValidation = 'Please select an option!';
+  static const String usernameLengthValidation = 'Username must contain at least 3 characters!';
   static const String passwordLengthValidation =
       "Password must contain at least 8 characters!";
   static const String passwordStrengthValidation = "Your password is too week!";
@@ -55,7 +56,7 @@ class TextConstants {
 
   // User Toast Texts
   static const String signInButtonSuccessToast = "Authenticated!";
-  static const String signInButtonErrorToast = "Invalid email or password!";
+  static const String signInButtonErrorToast = "Invalid username or password!";
   static const String userServiceLoginErrorToast = "Unable to Sign In!";
   static const String forgotPasswordButtonErrorToast = "Invalid email address!";
   static const String forgotPasswordButtonSuccessToast = "OTP sent to email!";
@@ -64,7 +65,7 @@ class TextConstants {
   static const String validateOTPButtonErrorToast = "Invalid otp address!";
   static const String validateOTPButtonSuccessToast = "Validate OTP!";
   static const String userServiceValidateOTPErrorToast = "Unable to validate!";
-  static const String resetPasswordButtonErrorToast = "Attepmt unsuccessful!";
+  static const String resetPasswordButtonErrorToast = "Attempt unsuccessful!";
   static const String resetPasswordButtonSuccessToast =
       "Password reset successfully!";
   static const String userServiceResetPasswordErrorToast = "Unable to reset!";
@@ -75,9 +76,13 @@ class TextConstants {
   static const String updateUserSuccessToast = "User updated successfully!";
   static const String updateUserErrorToast = "Unable to update the user!";
   static const String deleteUserSuccessToast = "User deleted successfully!";
-  static const String deleteUserErrorToast = "Unable to delete the user. User may have recoreded attendances!";
+  static const String deleteUserErrorToast =
+      "Unable to delete the user. User may have recoreded attendances!";
   static const String signUpButtonSuccessToast = "User registered!";
-  static const String signUpButtonAlreadyErrorToast = "User already exists!";
+  static const String signUpButtonAlreadyErrorToast = "Username or Email already taken!";
+  static const String signUpButtonErrorToast = "Unable to register user!";
+  static const String signOutButtonSuccessToast = "Logged out successfully!";
+  static const String signOutButtonErrorToast = "Unable to log out!";
 
   // Company Toast Texts
   static const String addCompanyButtonSuccessToast =
@@ -95,7 +100,8 @@ class TextConstants {
   static const String updateCompanyErrorToast = "Unable to update the company!";
   static const String deleteCompanySuccessToast =
       "Company deleted successfully!";
-  static const String deleteCompanyErrorToast = "Unable to delete the company. Company may have registered users!";
+  static const String deleteCompanyErrorToast =
+      "Unable to delete the company. Company may have registered users!";
 
   // Attendance Toast Texts
   static const String allAttendanceSuccessToast = "Attendances available!";
@@ -136,6 +142,10 @@ class TextConstants {
   static const String addCompanyButtonAlreadyErrorToast =
       "Company already exists or somthing went wrong!";
 
+  // Common Toast Messages
+  static const String noDataFound = "No data available!";
+  static const String badRequest = "Bad request!";
+
   // Log Error Texts
   static const String buttonLogError = "Error!";
 
@@ -166,7 +176,7 @@ class TextConstants {
   static const String addEndTimeTitleText = "END TIME";
 
   // Link Texts
-  static const String forgotPasswordLink = "Forgot your password?";
+  static const String resetPasswordLink = "Reset your password?";
   static const String validateOTPLink = "Reset OTP";
 
   // Image Link Texts
@@ -174,13 +184,16 @@ class TextConstants {
   static const String addCompanyImageLink = "assets/images/add-company.png";
   static const String companiesImageLink = "assets/images/card-company.png";
   static const String usersImageLink = "assets/images/card-user.png";
-  static const String attendancesImageLink = "assets/images/card-attendance.png";
+  static const String attendancesImageLink =
+      "assets/images/card-attendance.png";
   static const String addUserImageLink = "assets/images/add-user.png";
   static const String fingerPrintImageLink = "assets/images/finger-print.png";
   static const String companiesCardImageLink = "assets/images/card-company.png";
   static const String usersCardImageLink = "assets/images/card-user.png";
-  static const String attendacesCardImageLink = "assets/images/card-attendance.png";
-  static const String addAttendanceImageLink = "assets/images/add-attendance.png";
+  static const String attendacesCardImageLink =
+      "assets/images/card-attendance.png";
+  static const String addAttendanceImageLink =
+      "assets/images/add-attendance.png";
 
   // Drawer Texts
   static const String drawerHome = "Home";
@@ -208,16 +221,23 @@ class TextConstants {
   static const String adminCardAttendancesTitle = "ATTENDANCES";
   static const String adminCardCompanySubTitle = "Manage company details.";
   static const String adminCardUserSubTitle = "Manage user details.";
-  static const String adminCardAttendancesSubTitle = "Manage attendance details.";
+  static const String adminCardAttendancesSubTitle =
+      "Manage attendance details.";
 
   // Alert Texts
   static const String alertTitle = "ALERT";
-  static const String alertDeleteContent = "Are you sure you want to delete this content.";
-  static const String alertUpdateContent = "Are you sure you want to update this content.";
-  static const String alertAddContent = "Are you sure you want to add this content.";
-  static const String alertAddStartTime = "Are you sure you want to add start time now.";
-  static const String alertAddEndTime = "Are you sure you want to add end time now.";
-  static const String alertResetPassword = "Are you sure you want to reset your password.";
+  static const String alertDeleteContent =
+      "Are you sure you want to delete this content.";
+  static const String alertUpdateContent =
+      "Are you sure you want to update this content.";
+  static const String alertAddContent =
+      "Are you sure you want to add this content.";
+  static const String alertAddStartTime =
+      "Are you sure you want to add start time now.";
+  static const String alertAddEndTime =
+      "Are you sure you want to add end time now.";
+  static const String alertResetPassword =
+      "Are you sure you want to reset your password.";
   static const String alertButtonConfirm = "CONFIRM";
   static const String alertButtonCancel = "CANCEL";
   static const String alertButtonOk = "OK";

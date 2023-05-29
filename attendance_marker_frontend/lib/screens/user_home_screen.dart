@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user_model.dart';
+import '../services/user_service.dart';
 import '../utils/constants/backend_api_constants.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/icon_constants.dart';
@@ -25,10 +26,10 @@ class UserHomeScreen extends StatefulWidget {
 class _UserHomeScreenState extends State<UserHomeScreen> {
   // ---------------------------------------------- Get All Companies Function Start ----------------------------------------------
 
-  var username;
-  var email;
-  var companyName;
-  var companyLocation;
+  var username = "";
+  var email = "";
+  var companyName = "";
+  var companyLocation = "";
 
   @override
   void initState() {
@@ -36,13 +37,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     getUserById();
   }
 
-  getUserById()async{
+  getUserById() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      username = prefs.getString(ModelConstants.username);
-      email = prefs.getString(ModelConstants.email);
-      companyName = prefs.getString(ModelConstants.companyName);
-      companyLocation = prefs.getString(ModelConstants.companyLocation);
+      username = prefs.getString(ModelConstants.username).toString();
+      email = prefs.getString(ModelConstants.email).toString();
+      companyName = prefs.getString(ModelConstants.companyName).toString();
+      companyLocation =
+          prefs.getString(ModelConstants.companyLocation).toString();
     });
   }
 
@@ -51,8 +53,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        drawer:
-            NavigationalDrawerWidget.functionUserNavigationalDrawer(username, email, companyName, companyLocation, context),
+        drawer: NavigationalDrawerWidget.functionUserNavigationalDrawer(
+            username, email, companyName, companyLocation, context),
         appBar: AppBar(
           title: const Text(TextConstants.appTitle),
           centerTitle: true,
@@ -78,7 +80,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 size: SizeConstants.appBarIconSize,
               ),
               onPressed: () {
-                // do something
+                UserService().logOut(context);
               },
             ),
           ],

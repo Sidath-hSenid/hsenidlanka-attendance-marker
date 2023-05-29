@@ -54,12 +54,10 @@ class _AttendanceByUserScreenState extends State<AttendanceByUserScreen> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        var items = response.data;
-        if (items.toString().length != 2) {
-          ToastWidget.functionToastWidget(
-              TextConstants.allAttendanceSuccessToast,
-              ColorConstants.toastSuccessColor);
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        var items = response.data[ModelConstants.apiAttendanceResponseList];
+        // if (items.toString().length != 2) {
+        if (items != null) {
           setState(() {
             attendances = items;
           });
@@ -71,12 +69,18 @@ class _AttendanceByUserScreenState extends State<AttendanceByUserScreen> {
             attendances = [];
           });
         }
-      } else {
-        ToastWidget.functionToastWidget(TextConstants.allAttendanceErrorToast,
-            ColorConstants.toastErrorColor);
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
+        ToastWidget.functionToastWidget(
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
         setState(() {
           attendances = [];
         });
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
+        ToastWidget.functionToastWidget(TextConstants.allAttendanceErrorToast,
+            ColorConstants.toastErrorColor);
       }
       return response.data;
     } on DioError catch (e) {

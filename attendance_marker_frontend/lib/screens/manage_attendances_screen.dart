@@ -1,6 +1,7 @@
 import 'package:attendance_marker_frontend/screens/all_attendances_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:flutter/material.dart';
+import '../services/user_service.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/icon_constants.dart';
 import '../utils/constants/text_constants.dart';
@@ -16,7 +17,6 @@ class ManageAttendancesScreen extends StatefulWidget {
 }
 
 class _ManageAttendancesScreenState extends State<ManageAttendancesScreen> {
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -46,16 +46,13 @@ class _ManageAttendancesScreenState extends State<ManageAttendancesScreen> {
                 size: SizeConstants.appBarIconSize,
               ),
               onPressed: () {
-                // do something
+                UserService().logOut(context);
               },
             ),
           ],
         ),
         body: const TabBarView(
-          children: [
-            AllAttendancesScreen(),
-            AttendancesAllUsersScreen()
-          ],
+          children: [AllAttendancesScreen(), AttendancesAllUsersScreen()],
         ),
       ),
     );

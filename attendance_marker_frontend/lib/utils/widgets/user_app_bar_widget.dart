@@ -30,7 +30,7 @@ class UserAppBarWidget {
             size: SizeConstants.appBarIconSize,
           ),
           onPressed: () {
-            // do something
+            UserService().logOut(context);
           },
         ),
       ],

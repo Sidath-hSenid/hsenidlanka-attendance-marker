@@ -46,20 +46,24 @@ class _UsersAllCompaniesScreenState extends State<UsersAllCompaniesScreen> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        var items = response.data;
-        ToastWidget.functionToastWidget(TextConstants.allCompanySuccessToast,
-            ColorConstants.toastSuccessColor);
+      if (response.data[ModelConstants.apiStatusCode] == 200) {
+        var items = response.data[ModelConstants.apiCompanyResponseList];
         setState(() {
           companies = items;
         });
         isLoading = false;
-      } else {
+      } else if (response.data[ModelConstants.apiStatusCode] == 404) {
         ToastWidget.functionToastWidget(
-            TextConstants.allCompanyErrorToast, ColorConstants.toastErrorColor);
+            TextConstants.noDataFound, ColorConstants.toastErrorColor);
         setState(() {
           companies = [];
         });
+      } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+        ToastWidget.functionToastWidget(
+            TextConstants.badRequest, ColorConstants.toastErrorColor);
+      } else {
+        ToastWidget.functionToastWidget(
+            TextConstants.allCompanyErrorToast, ColorConstants.toastErrorColor);
       }
       // return json.decode(response.data);
       return response.data;
