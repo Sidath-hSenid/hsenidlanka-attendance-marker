@@ -35,8 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Container(
                 color: ColorConstants.primaryColor,
-                height: screenHeight / SizeConstants.screenHeightDivideBy,
-                width: screenWidth,
+                height: screenHeight / 2,
+                width: screenWidth * 2 / 3,
                 child: Padding(
                   padding: const EdgeInsets.all(
                       SizeConstants.signIgnImagePaddingAll),
@@ -51,9 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(
                               SizeConstants.signInScreenTopLeftRadius))),
-                  height: screenHeight *
-                      SizeConstants.screenHeightTop /
-                      SizeConstants.screenHeightDivideBy,
+                  height: screenHeight / 2,
                   width: screenWidth,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,

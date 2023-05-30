@@ -2,15 +2,12 @@ import 'dart:developer';
 
 import 'package:attendance_marker_frontend/utils/constants/color_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
-import 'package:attendance_marker_frontend/utils/widgets/alert_dialog_box.dart';
 import 'package:attendance_marker_frontend/utils/widgets/form_text_field_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../services/company_service.dart';
 import '../utils/constants/icon_constants.dart';
 import '../utils/constants/text_constants.dart';
-import '../utils/widgets/user_app_bar_widget.dart';
-import '../utils/widgets/navigational_drawer_widget.dart';
 
 class AddCompanyScreen extends StatefulWidget {
   const AddCompanyScreen({super.key});

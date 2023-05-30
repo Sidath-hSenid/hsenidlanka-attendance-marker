@@ -11,7 +11,8 @@ class CardWidget {
     return SizedBox(
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(SizeConstants.adminCardBorderRadius),
+          borderRadius:
+              BorderRadius.circular(SizeConstants.adminCardBorderRadius),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -23,10 +24,10 @@ class CardWidget {
                 child: DecoratedBox(
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
-                        topLeft:
-                            Radius.circular(SizeConstants.adminCardBorderRadius),
-                        bottomLeft:
-                            Radius.circular(SizeConstants.adminCardBorderRadius)),
+                        topLeft: Radius.circular(
+                            SizeConstants.adminCardBorderRadius),
+                        bottomLeft: Radius.circular(
+                            SizeConstants.adminCardBorderRadius)),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -43,10 +44,10 @@ class CardWidget {
                   decoration: const BoxDecoration(
                     color: ColorConstants.primaryColor,
                     borderRadius: BorderRadius.only(
-                        topRight:
-                            Radius.circular(SizeConstants.adminCardBorderRadius),
-                        bottomRight:
-                            Radius.circular(SizeConstants.adminCardBorderRadius)),
+                        topRight: Radius.circular(
+                            SizeConstants.adminCardBorderRadius),
+                        bottomRight: Radius.circular(
+                            SizeConstants.adminCardBorderRadius)),
                   ),
                   child: Center(
                     child: ListTile(

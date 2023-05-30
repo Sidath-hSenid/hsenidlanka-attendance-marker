@@ -56,7 +56,6 @@ class _AttendanceByUserScreenState extends State<AttendanceByUserScreen> {
 
       if (response.data[ModelConstants.apiStatusCode] == 200) {
         var items = response.data[ModelConstants.apiAttendanceResponseList];
-        // if (items.toString().length != 2) {
         if (items != null) {
           setState(() {
             attendances = items;

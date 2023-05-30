@@ -20,7 +20,6 @@ class _AddStartTimeScreenState extends State<AddStartTimeScreen> {
     var size = MediaQuery.of(context).size;
     var screenWidth = size.width;
     var screenHeight = size.height;
-
     return Scaffold(
         body: Center(
       child: SingleChildScrollView(
@@ -42,10 +41,44 @@ class _AddStartTimeScreenState extends State<AddStartTimeScreen> {
               Container(
                 margin: const EdgeInsets.only(
                     top: SizeConstants.fingerPrintMarginTop),
-                color: ColorConstants.enabledColor,
                 child: GestureDetector(
                   onTap: () {
-                    AttendanceService().addAttendance(context);
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext contexts) {
+                          return AlertDialog(
+                            title: const Text(
+                              TextConstants.alertTitle,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: SizeConstants.alertTitleFontSize,
+                                  color: ColorConstants.primaryColor),
+                            ),
+                            content: const Text(
+                              TextConstants.alertAddStartTime,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: SizeConstants.alertContentFontSize,
+                                  color: ColorConstants.primaryColor),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: const Text(
+                                  TextConstants.alertButtonOk,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          SizeConstants.alertButtonFontSize,
+                                      color: ColorConstants.primaryColor),
+                                ),
+                                onPressed: () {
+                                  AttendanceService().addAttendance(context);
+                                  Navigator.of(contexts).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
                   },
                   child: SizedBox(
                     child: Image.asset(

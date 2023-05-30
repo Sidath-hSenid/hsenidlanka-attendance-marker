@@ -1,6 +1,3 @@
-// ignore_for_file: avoid_print, prefer_interpolation_to_compose_strings
-
-import 'dart:convert';
 import 'dart:developer';
 import 'package:attendance_marker_frontend/utils/widgets/dropdown_list_widget.dart';
 import 'package:dio/dio.dart';
@@ -61,7 +58,6 @@ class _AddUserScreenState extends State<AddUserScreen> {
       );
 
       if (response.data[ModelConstants.apiStatusCode] == 200) {
-        print((response.data).runtimeType);
         var items = response.data[ModelConstants.apiCompanyResponseList];
         setState(() {
           companies = items;
@@ -144,9 +140,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
                         (value) {
                           if (value!.isEmpty) {
                             return TextConstants.emptyValueValidation;
-                          }else if (value.length < 3) {
+                          } else if (value.length < 3) {
                             return TextConstants.passwordLengthValidation;
-                          }else {
+                          } else {
                             return null;
                           }
                         }),

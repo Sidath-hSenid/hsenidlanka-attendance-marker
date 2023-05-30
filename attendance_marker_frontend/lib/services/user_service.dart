@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:attendance_marker_frontend/screens/admin_home_screen.dart';
 import 'package:attendance_marker_frontend/screens/login_screen.dart';
 import 'package:attendance_marker_frontend/screens/manage_users_screen.dart';
@@ -99,12 +97,14 @@ class UserService {
               ColorConstants.toastSuccessColor);
         }
       } else if (response.statusCode == 401) {
-        ToastWidget.functionToastWidget(TextConstants.signInButtonErrorToast,
+        ToastWidget.functionToastWidget(
+            TextConstants.signInButtonInvalidErrorToast,
             ColorConstants.toastErrorColor);
       }
     } on DioError catch (e) {
       ToastWidget.functionToastWidget(
-          TextConstants.signInButtonErrorToast, ColorConstants.toastErrorColor);
+          TextConstants.signInButtonInvalidErrorToast,
+          ColorConstants.toastErrorColor);
     }
   }
 
@@ -343,6 +343,12 @@ class UserService {
 
       if (response.data[ModelConstants.apiStatusCode] == 200) {
         prefs.remove(ModelConstants.token);
+        prefs.remove(ModelConstants.sharedUserId);
+        prefs.remove(ModelConstants.username);
+        prefs.remove(ModelConstants.email);
+        prefs.remove(ModelConstants.sharedCompanyId);
+        prefs.remove(ModelConstants.companyName);
+        prefs.remove(ModelConstants.companyLocation);
 
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const LoginScreen()));

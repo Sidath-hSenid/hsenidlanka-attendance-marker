@@ -50,8 +50,10 @@ class ModelConstants {
   static const String apiUserRequest = "userRequest";
   static const String apiLoginRequest = "loginRequest";
   static const String apiRegisterRequest = "registerRequest";
-  static const String apiAttendanceUpdateEndTimeRequest = "attendanceUpdateEndTimeRequest";
-  static const String apiAttendanceUpdateRequestById = "attendanceUpdateRequestById";
+  static const String apiAttendanceUpdateEndTimeRequest =
+      "attendanceUpdateEndTimeRequest";
+  static const String apiAttendanceUpdateRequestById =
+      "attendanceUpdateRequestById";
   static const String apiAttendanceResponse = "attendanceResponse";
   static const String apiAttendanceResponseList = "attendanceResponseList";
   static const String apiCompanyResponse = "companyResponse";

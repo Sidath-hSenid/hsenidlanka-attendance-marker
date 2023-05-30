@@ -5,7 +5,8 @@ class TextConstants {
   // Validation Texts
   static const String emptyValueValidation = "Field can not be empty!";
   static const String emptySelectValidation = 'Please select an option!';
-  static const String usernameLengthValidation = 'Username must contain at least 3 characters!';
+  static const String usernameLengthValidation =
+      'Username must contain at least 3 characters!';
   static const String passwordLengthValidation =
       "Password must contain at least 8 characters!";
   static const String passwordStrengthValidation = "Your password is too week!";
@@ -56,7 +57,9 @@ class TextConstants {
 
   // User Toast Texts
   static const String signInButtonSuccessToast = "Authenticated!";
-  static const String signInButtonErrorToast = "Invalid username or password!";
+  static const String signInButtonInvalidErrorToast =
+      "Invalid username or password!";
+  static const String signInButtonErrorToast = "Some thing went wrong please try again!";
   static const String userServiceLoginErrorToast = "Unable to Sign In!";
   static const String forgotPasswordButtonErrorToast = "Invalid email address!";
   static const String forgotPasswordButtonSuccessToast = "OTP sent to email!";
@@ -79,7 +82,8 @@ class TextConstants {
   static const String deleteUserErrorToast =
       "Unable to delete the user. User may have recoreded attendances!";
   static const String signUpButtonSuccessToast = "User registered!";
-  static const String signUpButtonAlreadyErrorToast = "Username or Email already taken!";
+  static const String signUpButtonAlreadyErrorToast =
+      "Username or Email already taken!";
   static const String signUpButtonErrorToast = "Unable to register user!";
   static const String signOutButtonSuccessToast = "Logged out successfully!";
   static const String signOutButtonErrorToast = "Unable to log out!";

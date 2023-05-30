@@ -42,7 +42,7 @@ class AlertDialogBox {
                 fontSize: SizeConstants.alertButtonFontSize,
                 color: ColorConstants.primaryColor),
           ),
-          onPressed: () async{
+          onPressed: () async {
             await confirmValue;
           },
         ),

@@ -11,16 +11,6 @@ import '../constants/text_constants.dart';
 class UserAppBarWidget {
   static functionAppBarInside(var appBarTextValue, var context) {
     return AppBar(
-      // leading: IconButton(
-      //     alignment: Alignment.centerLeft,
-      //     icon: const Icon(
-      //       IconPalette.appBarMenu,
-      //       color: ColorPalette.appBarIconColor,
-      //       size: SizeValues.appBarIconSize,
-      //     ),
-      //     onPressed: () {
-
-      //     }),
       actions: <Widget>[
         IconButton(
           alignment: Alignment.centerRight,

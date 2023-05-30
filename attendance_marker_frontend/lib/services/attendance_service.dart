@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:developer';
 
 import 'package:attendance_marker_frontend/screens/manage_attendances_screen.dart';
@@ -175,7 +173,153 @@ class AttendanceService {
                   );
                 });
           }
-        } else {}
+        } else if (res.data[ModelConstants.apiAttendanceResponse] == null) {
+          if (res.data[ModelConstants.apiStatusCode] == 404) {
+            log("AttendanceService - addAttendance(Status code equals to 200)");
+            if (res.data[ModelConstants.apiAttendanceResponse] == null) {
+              log("AttendanceService - addAttendance(No attendance available with the user ID and Date)");
+              Response response;
+              response = await dio.post(
+                BackendAPIConstants.rootAPI +
+                    BackendAPIConstants.addAttendanceAPI,
+                data: {
+                  ModelConstants.date: date,
+                  ModelConstants.startTime: startTime,
+                  ModelConstants.endTime: null,
+                  ModelConstants.workedHours: 0,
+                  ModelConstants.halfDay: false,
+                  ModelConstants.user: {
+                    ModelConstants.userId: userId,
+                    ModelConstants.username: username,
+                    ModelConstants.email: email,
+                    ModelConstants.password: null,
+                    ModelConstants.company: {
+                      ModelConstants.companyId: companyId,
+                      ModelConstants.companyName: companyName,
+                      ModelConstants.companyLocation: companyLocation
+                    }
+                  },
+                },
+                options: Options(
+                  contentType: Headers.jsonContentType,
+                  headers: {ModelConstants.auth: "Bearer $accessToken"},
+                ),
+              );
+              if (response.data[ModelConstants.apiStatusCode] == 201) {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserHomeScreen()));
+                ToastWidget.functionToastWidget(
+                    TextConstants.addAttendanceSuccessToast,
+                    ColorConstants.toastSuccessColor);
+              } else if (response.data[ModelConstants.apiStatusCode] == 400) {
+                ToastWidget.functionToastWidget(
+                    TextConstants.addAttendanceErrorToast,
+                    ColorConstants.toastErrorColor);
+
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserHomeScreen()));
+              } else {
+                ToastWidget.functionToastWidget(
+                    TextConstants.addAttendanceErrorToast,
+                    ColorConstants.toastErrorColor);
+
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserHomeScreen()));
+              }
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text(
+                        TextConstants.alertTitle,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConstants.alertTitleFontSize,
+                            color: ColorConstants.errorBorder),
+                      ),
+                      content: const Text(
+                        TextConstants.alreadyAddedAttendanceErrorToast,
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: SizeConstants.alertContentFontSize,
+                            color: ColorConstants.errorBorder),
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text(
+                            TextConstants.alertButtonOk,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: SizeConstants.alertButtonFontSize,
+                                color: ColorConstants.errorBorder),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            }
+          } else {
+            ToastWidget.functionToastWidget(
+                TextConstants.addAttendanceErrorToast,
+                ColorConstants.toastErrorColor);
+
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const UserHomeScreen()));
+          }
+        } else if (res.data[ModelConstants.apiStatusCode] == 400) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text(
+                    TextConstants.alertTitle,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: SizeConstants.alertTitleFontSize,
+                        color: ColorConstants.errorBorder),
+                  ),
+                  content: const Text(
+                    TextConstants.badRequest,
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: SizeConstants.alertContentFontSize,
+                        color: ColorConstants.errorBorder),
+                  ),
+                  actions: [
+                    TextButton(
+                      child: const Text(
+                        TextConstants.alertButtonOk,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConstants.alertButtonFontSize,
+                            color: ColorConstants.errorBorder),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              });
+        } else {
+          ToastWidget.functionToastWidget(TextConstants.addAttendanceErrorToast,
+              ColorConstants.toastErrorColor);
+
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const UserHomeScreen()));
+        }
       } else {
         log("AttendanceService - addAttendance(Locations are not equal.)");
         showDialog(
@@ -214,7 +358,6 @@ class AttendanceService {
             });
       }
     } on DioError catch (e) {
-      print(e);
       ToastWidget.functionToastWidget(
           e.toString(), ColorConstants.toastWarningColor);
     }

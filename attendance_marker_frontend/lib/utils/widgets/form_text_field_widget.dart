@@ -3,8 +3,14 @@ import 'package:attendance_marker_frontend/utils/constants/size_constants.dart';
 import 'package:flutter/material.dart';
 
 class FormTextFieldWidget {
-  static functionTextFormField(var enableValue,var controllerValue, onChangedValue, var lableValue,
-      var obscureValue, var iconValue, validatorValue) {
+  static functionTextFormField(
+      var enableValue,
+      var controllerValue,
+      onChangedValue,
+      var lableValue,
+      var obscureValue,
+      var iconValue,
+      validatorValue) {
     return TextFormField(
       enabled: enableValue,
       controller: controllerValue,

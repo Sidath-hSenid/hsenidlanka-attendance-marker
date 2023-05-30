@@ -32,8 +32,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             children: [
               Container(
                 color: ColorConstants.primaryColor,
-                height: screenHeight / SizeConstants.screenHeightDivideBy,
-                width: screenWidth,
+                height: screenHeight * 3 / 8,
+                width: screenWidth * 2 / 3,
                 child: Padding(
                   padding: const EdgeInsets.all(
                       SizeConstants.signIgnImagePaddingAll),
@@ -48,8 +48,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(
                               SizeConstants.signInScreenTopLeftRadius))),
-                  height:
-                      screenHeight * 1.5 / SizeConstants.screenHeightDivideBy,
+                  height: screenHeight * 6 / 8,
                   width: screenWidth,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,

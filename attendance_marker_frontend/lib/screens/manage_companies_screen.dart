@@ -1,6 +1,5 @@
 import 'package:attendance_marker_frontend/screens/add_company_screen.dart';
 import 'package:attendance_marker_frontend/screens/all_companies_screen.dart';
-import 'package:attendance_marker_frontend/screens/users_by_company_screen.dart';
 import 'package:attendance_marker_frontend/utils/constants/icon_constants.dart';
 import 'package:attendance_marker_frontend/utils/constants/text_constants.dart';
 import 'package:flutter/material.dart';

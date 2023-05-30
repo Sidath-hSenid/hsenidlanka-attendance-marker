@@ -1,20 +1,16 @@
 import 'package:attendance_marker_frontend/screens/add_end_time_screen.dart';
 import 'package:attendance_marker_frontend/screens/add_start_time_screen.dart';
 import 'package:attendance_marker_frontend/screens/user_view_attendances_screen.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/user_model.dart';
 import '../services/user_service.dart';
-import '../utils/constants/backend_api_constants.dart';
 import '../utils/constants/color_constants.dart';
 import '../utils/constants/icon_constants.dart';
 import '../utils/constants/model_constants.dart';
 import '../utils/constants/size_constants.dart';
 import '../utils/constants/text_constants.dart';
 import '../utils/widgets/navigational_drawer_widget.dart';
-import '../utils/widgets/toast_widget.dart';
 
 class UserHomeScreen extends StatefulWidget {
   const UserHomeScreen({super.key});
